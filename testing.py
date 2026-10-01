@@ -1,4 +1,5 @@
 import SELQIE as slq
+import numpy as np
 import pyscf
 
 slq.config.hello()
@@ -15,3 +16,5 @@ mol.build()
 settings = slq.config.settings(n_up=2,n_down=2)
 
 slq.methods.selected_ci.solve(mol,settings)
+
+help(np.asarray)
