@@ -1,11 +1,11 @@
-import SeQChem as sqc
+import SELQIE as slq
 import pyscf
 import numpy as np
 
 def solve(
     mol: pyscf.gto.Mole,
-    settings: sqc.config.settings
-) -> sqc.config.state:
+    settings: slq.config.settings
+) -> slq.config.state:
     """
     Solve using Selected CI.
     """
@@ -27,7 +27,7 @@ def solve(
     nuc_replusion = mf.mol.energy_nuc()
 
     #generate reference determinant
-    ref_det = sqc.determinants.reference_determinant(settings.n_up, settings.n_down, n_orb)
+    ref_det = slq.determinants.reference_determinant(settings.n_up, settings.n_down, n_orb)
 
     #set initial selected space
     #get selected space hamiltonian

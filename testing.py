@@ -1,7 +1,7 @@
-import SeQChem as sqc
+import SELQIE as slq
 import pyscf
 
-sqc.config.hello()
+slq.config.hello()
 
 mol = pyscf.gto.Mole()
 mol.verbose = 0
@@ -12,6 +12,6 @@ mol.atom = [
 mol.basis = 'sto3g'
 mol.build()
 
-settings = sqc.config.settings(n_up=2,n_down=2)
+settings = slq.config.settings(n_up=2,n_down=2)
 
-sqc.methods.selected_ci.solve(mol,settings)
+slq.methods.selected_ci.solve(mol,settings)

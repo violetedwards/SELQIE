@@ -1,4 +1,4 @@
-import SeQChem as sqc
+import SELQIE as slq
 import numpy as np
 from dataclasses import dataclass
 

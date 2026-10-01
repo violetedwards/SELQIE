@@ -1,2 +1,2 @@
-# SeQChem
-Selected Quantum Chemistry Package
+# SELQIE
+SELected Quantum Interacting Electrons
