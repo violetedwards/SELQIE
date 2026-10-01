@@ -17,4 +17,4 @@ settings = slq.config.settings(n_up=2,n_down=2)
 
 slq.methods.selected_ci.solve(mol,settings)
 
-help(np.asarray)
+

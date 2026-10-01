@@ -54,4 +54,23 @@ def get_matrix_element(column_det: slq.determinants.determinant, row_det: slq.de
     """
 
 
+def compare_dets(det1: slq.determinants.determinant, det2: slq.determinants.determinant) -> np.array:
+    """
+    Compare determinants to get added/removed orbitals
 
+    Parameters
+    ----------
+    det1:           slq.determinants.determinant
+                    reference determinant
+    det2:           slq.determinants.determinant
+                    excited determinant
+    
+    Returns
+    -------
+    orbital_diff:   np.array([added,removed])
+                    added: list of orbitals addded to det2
+                    removed: list of orbitals removed from det2
+    """
+    removed = np.array([i for i in det1.occupations if (det2.bitstring & (1<<i)) == False])
+    added = np.array([i for i in det2.occupations if (det1.bitstring & (1<<i)) == False])
+    return np.array([added,removed])
