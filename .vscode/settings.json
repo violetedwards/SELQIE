@@ -1,0 +1,8 @@
+{
+    "python.REPL.enableREPLSmartSend": false,
+    "github.copilot.chat.tools.viewImage.enabled": false,
+    "github.copilot.chat.copilotDebugCommand.enabled": false,
+    "github.copilot.chat.gemini35FlashReducedToolUsePrompt.enabled": false,
+    "github.copilot.chat.exploreAgent.enabled": false,
+    "github.copilot.chat.geminiFlashPromptAdditions.enabled": false
+}
