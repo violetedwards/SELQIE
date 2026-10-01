@@ -1,6 +1,7 @@
 import SELQIE as slq
 import pyscf
 import numpy as np
+import scipy as sp
 
 def solve(
     mol: pyscf.gto.Mole,
@@ -44,5 +45,14 @@ def solve(
     #apply PT2
 
     #output
+
+
+
+    #TEST, CISD
+    det_basis = np.append([ref_det],slq.determinants.get_connected_dets(ref_det,2))
+    hamiltonian = slq.hamiltonian.build_hamiltonian(det_basis, eint1, eint2)
+    e, civec = sp.linalg.eigh(hamiltonian)
+
+    print(e)
 
 

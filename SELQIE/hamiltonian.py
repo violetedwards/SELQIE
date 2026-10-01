@@ -62,7 +62,7 @@ def get_matrix_element(column_det: slq.determinants.determinant, row_det: slq.de
         return 0.0
     elif order == 0:
         #dets are same 
-        return np.sum(h[i,i] for i in row_det.occupations) + 0.5 * np.sum((g[i,j,i,j]-g[i,j,j,i]) for i,j in row_det.occupations if i != j)
+        return np.sum(h[i,i] for i in row_det.occupations) + 0.5 * np.sum((g[i,j,i,j]-g[i,j,j,i]) for i in row_det.occupations for j in row_det.occupations if i != j)
     elif order == 1:
         #dets are single exictation difference
         alpha = added[0]

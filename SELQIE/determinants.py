@@ -24,6 +24,7 @@ class determinant:
             bitstring = bitstring | (1<<orbital) 
         return self(bitstring, n_spin_orbitals)
 
+    @property
     def occupations(self) -> np.array:
         return np.array([i for i in range(0,self.n_spin_orbitals) if self.bitstring & (1<<i)])
 
@@ -53,7 +54,7 @@ def get_connected_dets(ref_det: determinant, order: int) -> np.array:
     """
     occupied = ref_det.occupations
     virtual = np.array([i for i in range(0,ref_det.n_spin_orbitals) if (ref_det.bitstring & (1 << i))==False])
-    connected_dets = np.empty()
+    connected_dets = np.array([])
     for removed in itertools.combinations(occupied, order):
         for added in itertools.combinations(virtual,order):
             bitstring = ref_det.bitstring
