@@ -27,8 +27,6 @@ class determinant:
         return np.array([i for i in range(0,self.n_spin_orbitals) if self.bitstring & (1<<i)])
 
 
-
-
 #create reference determinant
 def reference_determinant(n_orb: int, n_alpha: int, n_beta: int) -> determinant:
     occupations = np.concatenate((np.arange(0,n_alpha), np.arange(n_orb, n_orb+n_beta)))

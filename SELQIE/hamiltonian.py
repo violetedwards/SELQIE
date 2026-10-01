@@ -52,7 +52,29 @@ def get_matrix_element(column_det: slq.determinants.determinant, row_det: slq.de
     element:        float
                     the calculated Hamiltonian matrix element
     """
+    compare = compare_dets(column_det,row_det)
+    added = compare[0]
+    removed = compare[1]
+    order = len(added)
 
+    #Slater-Condon rules
+    if order > 2:
+        return 0.0
+    elif order == 0:
+        #dets are same 
+        return np.sum(h[i,i] for i in row_det.occupations) + 0.5 * np.sum((g[i,j,i,j]-g[i,j,j,i]) for i,j in row_det.occupations if i != j)
+    elif order == 1:
+        #dets are single exictation difference
+        alpha = added[0]
+        a = removed[0]
+        return h[alpha, a] + np.sum((g[a,i,alpha,i]-g[a,i,i,alpha]) for i in row_det.occupations)
+    elif order == 2:
+        #dets are double excitation difference
+        alpha = added[0]
+        beta = added[1]
+        a = removed[0]
+        b = removed[1]
+        return g[a,b,alpha,beta] - g[a,b,beta,alpha]
 
 def compare_dets(det1: slq.determinants.determinant, det2: slq.determinants.determinant) -> np.array:
     """
