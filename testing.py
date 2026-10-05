@@ -13,8 +13,17 @@ mol.atom = [
 mol.basis = 'sto3g'
 mol.build()
 
-settings = slq.config.settings(n_up=2,n_down=2)
+n_alpha, n_beta = mol.nelec
+settings = slq.config.settings(n_up=n_alpha,n_down=n_beta)
 
-slq.methods.selected_ci.solve(mol,settings)
 
+energy = "energy:"
+print(f"my cisd {energy:<15} {slq.methods.selected_ci.solve(mol,settings)[0]:.4f} Ha")
+
+mf = mol.RHF().run()
+myci = mf.CISD().run()
+
+
+
+print(f"PySCF cisd {energy:<12} {myci.e_tot:.4f} Ha")
 

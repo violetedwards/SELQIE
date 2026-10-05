@@ -31,7 +31,7 @@ class determinant:
 
 #create reference determinant
 def reference_determinant(n_orb: int, n_alpha: int, n_beta: int) -> determinant:
-    occupations = np.concatenate((np.arange(0,n_alpha), np.arange(n_orb, n_orb+n_beta)))
+    occupations = np.append(np.arange(0,n_alpha), np.arange(n_orb, n_orb+n_beta))
     return determinant.create(occupations, 2*n_orb)
 
 
@@ -54,13 +54,17 @@ def get_connected_dets(ref_det: determinant, order: int) -> np.array:
     """
     occupied = ref_det.occupations
     virtual = np.array([i for i in range(0,ref_det.n_spin_orbitals) if (ref_det.bitstring & (1 << i))==False])
+    n_orb = ref_det.n_spin_orbitals // 2
     connected_dets = np.array([])
     for removed in itertools.combinations(occupied, order):
         for added in itertools.combinations(virtual,order):
+            if sum(orbital < n_orb for orbital in removed) != sum(orbital < n_orb for orbital in added):
+                continue
             bitstring = ref_det.bitstring
             for orbital in removed:
                 bitstring = bitstring ^ (1<<orbital)
             for orbital in added:
                 bitstring = bitstring | (1<<orbital)
-            np.append(connected_dets, determinant(bitstring, ref_det.n_spin_orbitals))
+            connected_dets = np.append(connected_dets, determinant(bitstring, ref_det.n_spin_orbitals))
+
     return connected_dets

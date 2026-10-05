@@ -13,8 +13,7 @@ def solve(
     print("Solving")
 
     #Run initial HF calculation
-    mf = pyscf.scf.RHF(mol)
-    mf.kernel()
+    mf = mol.RHF().run()
 
     #Get system data from this:
     mo_coeff = np.asarray(mf.mo_coeff)
@@ -28,7 +27,10 @@ def solve(
     nuc_replusion = mf.mol.energy_nuc()
 
     #generate reference determinant
-    ref_det = slq.determinants.reference_determinant(settings.n_up, settings.n_down, n_orb)
+    ref_det = slq.determinants.reference_determinant(n_orb, settings.n_up, settings.n_down)
+
+    #transform spatial orbital integrals into spin orbital integrals
+    h_int, g_int = slq.hamiltonian.space_to_spin_eints(eint1,eint2)
 
     #set initial selected space
     #get selected space hamiltonian
@@ -49,10 +51,9 @@ def solve(
 
 
     #TEST, CISD
-    det_basis = np.append([ref_det],slq.determinants.get_connected_dets(ref_det,2))
-    hamiltonian = slq.hamiltonian.build_hamiltonian(det_basis, eint1, eint2)
+    det_basis = np.append(np.append([ref_det],slq.determinants.get_connected_dets(ref_det,1)),slq.determinants.get_connected_dets(ref_det,2))
+    hamiltonian = slq.hamiltonian.build_hamiltonian(det_basis, h_int, g_int)
     e, civec = sp.linalg.eigh(hamiltonian)
-
-    print(e)
+    return e + nuc_replusion
 
 
