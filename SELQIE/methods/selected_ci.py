@@ -3,7 +3,7 @@ import pyscf # type: ignore[reportMissingImports]
 import numpy as np # type: ignore[reportMissingImports]
 import scipy as sp # type: ignore[reportMissingImports]
 
-def add_to_selected_space(algorithm: str,selected_space: np.array,interacting_space: np.array,selected_E: float,selected_c: np.array, h: np.array, g: np.array) -> np.array:
+def add_selected_dets(algorithm: str,selected_space: np.array,selected_E: float,selected_c: np.array, h: np.array, g: np.array, settings:slq.config.settings) -> np.array:
     """
     Performs selection algorithm to decide elements of interacting space to add to selected space
 
@@ -24,7 +24,14 @@ def add_to_selected_space(algorithm: str,selected_space: np.array,interacting_sp
                         the selected space after additions
     """
     if algorithm == "test":
-        return slq.methods.selection.test.select(selected_space, interacting_space,h,g,selected_c)
+        return slq.methods.selection.test.select(selected_space,h,g,selected_c)
+    if algorithm == "hci":
+        return slq.methods.selection.HCI.select(selected_space,h,g,settings.hci_epsilon)
+
+
+
+
+
 
 def solve(
     mol: pyscf.gto.Mole,
@@ -72,12 +79,9 @@ def solve(
             selected_E_old = selected_E_old[0]
             selected_c_old = selected_c_old[:,0]
 
-        #generate interacting space for selected space
-        interacting_space = slq.determinants.unique_dets(np.append(slq.determinants.get_connected_dets(selected_space,1,multiple=True),slq.determinants.get_connected_dets(selected_space,2,multiple=True)))
-
         #apply selection algorithm to add to seleced space
         #print("performing selection...")
-        selected_space = add_to_selected_space(settings.sel_method, selected_space, interacting_space, selected_E_old, selected_c_old, h_int, g_int)
+        selected_space = add_selected_dets(settings.sel_method, selected_space, selected_E_old, selected_c_old, h_int, g_int,settings)
 
         #get hamiltonian for new slected space
         selected_space_H = slq.hamiltonian.build_hamiltonian(selected_space, h_int, g_int)

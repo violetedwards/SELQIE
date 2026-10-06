@@ -107,9 +107,6 @@ def unique_dets(det_list, existing=None):
     """
     Return the determinant list with duplicates removed while preserving the
     first occurrence of each bitstring.
-
-    ``existing`` may be passed to exclude determinants that are already in the
-    selected space.
     """
     if det_list is None or len(det_list) == 0:
         return np.array([], dtype=object)

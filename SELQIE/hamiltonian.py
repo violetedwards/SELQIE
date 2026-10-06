@@ -1,4 +1,4 @@
-import numpy as np
+import numpy as np # type: ignore[reportMissingImports]
 import SELQIE as slq
 
 

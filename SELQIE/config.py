@@ -16,7 +16,8 @@ class settings:
     n_down: int
     test: "str" = None
     conv: float = 1e-8
-    cmin: float = 1e-4
+    cmin: float = 1e-3
+    hci_epsilon: float = None
 
 @dataclass
 class selection_params:
