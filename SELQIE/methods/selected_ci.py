@@ -1,7 +1,7 @@
 import SELQIE as slq
-import pyscf
-import numpy as np
-import scipy as sp
+import pyscf # type: ignore[reportMissingImports]
+import numpy as np # type: ignore[reportMissingImports]
+import scipy as sp # type: ignore[reportMissingImports]
 
 def solve(
     mol: pyscf.gto.Mole,

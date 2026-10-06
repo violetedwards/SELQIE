@@ -1,7 +1,7 @@
 import math
 import SELQIE as slq
-import numpy as np
-import pyscf
+import numpy as np # type: ignore[reportMissingImports]
+import pyscf # type: ignore[reportMissingImports]
 
 slq.config.hello()
 

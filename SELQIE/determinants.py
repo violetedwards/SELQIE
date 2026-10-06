@@ -1,5 +1,5 @@
 import SELQIE as slq
-import numpy as np
+import numpy as np # type: ignore[reportMissingImports]
 from dataclasses import dataclass
 import itertools
 
