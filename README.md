@@ -5,10 +5,9 @@ A modular python package for ab initio selected quantum chemistry methods.
 
 WORK IN PROGRESS
 Current code features:
-- nothing it doesnt work yet
+- HCI
 
 Next planned functionality (in order):
-- Simplier CI methods using the selected CI functions, FCI, CISD etc.
 - Selected CI methods implemented naively in python. (ACI, ASCI, HCI, etc)
 - Optimisation of python code
 - Moving expensive functions into python-wrapped FORTRAN
