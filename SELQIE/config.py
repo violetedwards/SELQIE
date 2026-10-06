@@ -13,6 +13,13 @@ def hello():
 class settings:
     n_up: int
     n_down: int
+    test: "str" = None
+    conv: float = 1e-8
+    cmin: float = 1e-4
+
+@dataclass
+class selection_params:
+    ACI_sigma: float = None
 
 #object for holding result data
 @dataclass

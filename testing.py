@@ -1,3 +1,4 @@
+import math
 import SELQIE as slq
 import numpy as np
 import pyscf
@@ -14,16 +15,26 @@ mol.basis = 'sto3g'
 mol.build()
 
 n_alpha, n_beta = mol.nelec
-settings = slq.config.settings(n_up=n_alpha,n_down=n_beta)
-
+settings = slq.config.settings(n_up=n_alpha,n_down=n_beta,conv=1e-6,cmin=1e-6)
 
 energy = "energy:"
-print(f"my cisd {energy:<15} {slq.methods.selected_ci.solve(mol,settings)[0]:.4f} Ha")
+
+sci_e, sci_len = slq.methods.selected_ci.solve(mol,settings)
+print(f"SELQIE SCI dets: {sci_len}")
+print(f"SELQIE sci {energy:<12} {sci_e} Ha\n")
 
 mf = mol.RHF().run()
-myci = mf.CISD().run()
 
+cisd_obj = mf.CISD()
+cisd_obj.run()
+print(f"PYSCF cisd dets: {len(cisd_obj.ci)}")
+print(f"PySCF cisd {energy:<12} {cisd_obj.e_tot:.6f} Ha\n")
 
+n_orb = mf.mo_coeff.shape[1]
+n_alpha, n_beta = mf.mol.nelec
+raw_fci_dets = int(math.comb(n_orb, n_alpha) * math.comb(n_orb, n_beta))
+print(f"PYSCF fci dets: {raw_fci_dets}")
 
-print(f"PySCF cisd {energy:<12} {myci.e_tot:.4f} Ha")
-
+fci_obj = pyscf.fci.FCI(mf)
+fci_e, _ = fci_obj.kernel()
+print(f"PySCF fci {energy:<13} {fci_e:.6f} Ha")

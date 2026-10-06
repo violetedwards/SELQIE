@@ -33,27 +33,63 @@ def solve(
     h_int, g_int = slq.hamiltonian.space_to_spin_eints(eint1,eint2)
 
     #set initial selected space
-    #get selected space hamiltonian
-    #diagonalise selected hamiltonian
+    selected_space = slq.determinants.initial_selected_space(ref_det)
+    print(f"Initial Selected space size: {len(selected_space)}")
     #start main loop
-        #generate interacting space for selected space
-        #apply selection algorithm to add to seleced space
-        #prune
-        #get hamiltonian for new slected space
-        #diagonalise new selected hamiltonian
-        #check convergence
-    #end main loop
+    converged = False
+    iteration = 0
+    while converged == False:
+        print(f"Iteraion {iteration}")
+        #get selected space hamiltonian
+        selected_space_H = slq.hamiltonian.build_hamiltonian(selected_space, h_int, g_int)
 
+        #diagonalise selected hamiltonian
+        selected_E_old, selected_c_old = sp.linalg.eigh(selected_space_H)
+        if type(selected_E_old) == np.ndarray:
+            selected_E_old = selected_E_old[0]
+            selected_c_old = selected_c_old[:,0]
+
+        #generate interacting space for selected space
+        interacting_space = slq.determinants.unique_dets(np.append(slq.determinants.get_connected_dets(selected_space,1,multiple=True),slq.determinants.get_connected_dets(selected_space,2,multiple=True)))
+
+        #apply selection algorithm to add to seleced space
+        #print("performing selection...")
+        selected_space = slq.selection.add_to_selected_space("dumb", selected_space, interacting_space, selected_E_old, selected_c_old, h_int, g_int)
+
+        #get hamiltonian for new slected space
+        selected_space_H = slq.hamiltonian.build_hamiltonian(selected_space, h_int, g_int)
+
+        #diagonalise new selected hamiltonian
+        selected_E_new, selected_c_new = sp.linalg.eigh(selected_space_H)
+        if type(selected_E_new) == np.ndarray:
+            selected_E_new = selected_E_new[0]
+            selected_c_new  =selected_c_new[:,0]
+
+        print(f"\tSelected space size: {len(selected_space)}")
+
+        #check convergence
+        print(f"\told: {selected_E_old}, new: {selected_E_new}")
+        if abs(selected_E_old - selected_E_new) < settings.conv:
+            converged = True
+        else:
+            converged = False
+
+        #prune if not converged
+        if converged == False:
+            print("\tPruning...")
+            keep = np.abs(selected_c_new) >= settings.cmin
+            selected_space = selected_space[keep]
+
+
+        print(f"\tSelected space size: {len(selected_space)}")
+        iteration+=1
+
+    #end main loop
+    print("energy converged")
+    print("---------------------------------------------------------------------------------\n\n")
     #apply PT2
 
     #output
-
-
-
-    #TEST, CISD
-    det_basis = np.append(np.append([ref_det],slq.determinants.get_connected_dets(ref_det,1)),slq.determinants.get_connected_dets(ref_det,2))
-    hamiltonian = slq.hamiltonian.build_hamiltonian(det_basis, h_int, g_int)
-    e, civec = sp.linalg.eigh(hamiltonian)
-    return e + nuc_replusion
+    return np.round(selected_E_new + nuc_replusion, decimals=slq.utilities.find_exp(settings.conv)),len(selected_space)
 
 

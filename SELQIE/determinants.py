@@ -36,7 +36,7 @@ def reference_determinant(n_orb: int, n_alpha: int, n_beta: int) -> determinant:
 
 
 
-def get_connected_dets(ref_det: determinant, order: int) -> np.array:
+def get_connected_dets(ref_dets: determinant, order: int, multiple: bool = False) -> np.array:
     """
     Get all determinants that can be gained by excitation (connected) from a reference by exchanging n=order electrons
     
@@ -46,25 +46,68 @@ def get_connected_dets(ref_det: determinant, order: int) -> np.array:
                 determinant which will act as the reference
     order:      int
                 max order of excitations from reference that will be generated.
-    
+    multiple:   are there multile reference dets
     Returns
     -------
     connected_dets: np.array([slq.determinants.determinant])
                     list of connected determinants
     """
-    occupied = ref_det.occupations
-    virtual = np.array([i for i in range(0,ref_det.n_spin_orbitals) if (ref_det.bitstring & (1 << i))==False])
-    n_orb = ref_det.n_spin_orbitals // 2
     connected_dets = np.array([])
-    for removed in itertools.combinations(occupied, order):
-        for added in itertools.combinations(virtual,order):
-            if sum(orbital < n_orb for orbital in removed) != sum(orbital < n_orb for orbital in added):
-                continue
-            bitstring = ref_det.bitstring
-            for orbital in removed:
-                bitstring = bitstring ^ (1<<orbital)
-            for orbital in added:
-                bitstring = bitstring | (1<<orbital)
-            connected_dets = np.append(connected_dets, determinant(bitstring, ref_det.n_spin_orbitals))
+    if multiple == True:
+        for ref_det in ref_dets:
+            occupied = ref_det.occupations
+            virtual = np.array([i for i in range(0,ref_det.n_spin_orbitals) if (ref_det.bitstring & (1 << i))==False])
+            n_orb = ref_det.n_spin_orbitals // 2
+            for removed in itertools.combinations(occupied, order):
+                for added in itertools.combinations(virtual,order):
+                    if sum(orbital < n_orb for orbital in removed) != sum(orbital < n_orb for orbital in added):
+                        continue
+                    bitstring = ref_det.bitstring
+                    for orbital in removed:
+                        bitstring = bitstring ^ (1<<orbital)
+                    for orbital in added:
+                        bitstring = bitstring | (1<<orbital)
+                    connected_dets = np.append(connected_dets, determinant(bitstring, ref_det.n_spin_orbitals))
+    if multiple == False:
+        ref_det = ref_dets
+        occupied = ref_det.occupations
+        virtual = np.array([i for i in range(0,ref_det.n_spin_orbitals) if (ref_det.bitstring & (1 << i))==False])
+        n_orb = ref_det.n_spin_orbitals // 2
+        for removed in itertools.combinations(occupied, order):
+            for added in itertools.combinations(virtual,order):
+                if sum(orbital < n_orb for orbital in removed) != sum(orbital < n_orb for orbital in added):
+                    continue
+                bitstring = ref_det.bitstring
+                for orbital in removed:
+                    bitstring = bitstring ^ (1<<orbital)
+                for orbital in added:
+                    bitstring = bitstring | (1<<orbital)
+                connected_dets = np.append(connected_dets, determinant(bitstring, ref_det.n_spin_orbitals))
 
-    return connected_dets
+    return unique_dets(connected_dets)
+
+def initial_selected_space(ref_det: determinant) -> np.array:
+    """
+    Generate the initial selected space  ==CURRENTLY SIMPLISTIC IMPLEMENTENTATION==
+
+    Parameters
+    ----------
+    ref_det     slq.determinants.determinant
+                reference hartree-fock state
+    
+    Returns
+    -------
+    init_sel_space  np.array[slq.determinmants.determinant,...]
+                    initial selected space
+    """
+    return np.array([ref_det])
+
+
+def unique_dets(det_list):
+    bitstring_list = np.array([])
+    for det in det_list:
+        bitstring_list = np.append(bitstring_list, det.bitstring)
+    unique_bitstring_list, unique_index = np.unique(bitstring_list, return_index=True)
+    unique_det_list = np.take(det_list, unique_index)
+
+    return unique_det_list
