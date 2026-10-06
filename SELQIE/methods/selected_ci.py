@@ -3,6 +3,29 @@ import pyscf # type: ignore[reportMissingImports]
 import numpy as np # type: ignore[reportMissingImports]
 import scipy as sp # type: ignore[reportMissingImports]
 
+def add_to_selected_space(algorithm: str,selected_space: np.array,interacting_space: np.array,selected_E: float,selected_c: np.array, h: np.array, g: np.array) -> np.array:
+    """
+    Performs selection algorithm to decide elements of interacting space to add to selected space
+
+    Parameters:
+    algorithm           str
+                        the selection algorithm to be performed
+    selected_space      np.array[slq.determimants.determinant, ...]
+                        the space of selected determinants before the anything is added
+    interacting_space   np.array[slq.determimants.determinant, ...]
+                        the space of elements that can interact with elements of the selected space
+    selected_E          float
+                        the energy of the solved selected space state
+    selected_c          np.array[float, ...]
+                        the c vector of the solved selected space state
+
+    Returns:
+    new_selected_space  np.array[slq.determimants.determinant, ...]
+                        the selected space after additions
+    """
+    if algorithm == "dumb":
+        return slq.methods.selection.test.select(selected_space, interacting_space,h,g,selected_c)
+
 def solve(
     mol: pyscf.gto.Mole,
     settings: slq.config.settings
@@ -54,7 +77,7 @@ def solve(
 
         #apply selection algorithm to add to seleced space
         #print("performing selection...")
-        selected_space = slq.selection.add_to_selected_space("dumb", selected_space, interacting_space, selected_E_old, selected_c_old, h_int, g_int)
+        selected_space = add_to_selected_space("dumb", selected_space, interacting_space, selected_E_old, selected_c_old, h_int, g_int)
 
         #get hamiltonian for new slected space
         selected_space_H = slq.hamiltonian.build_hamiltonian(selected_space, h_int, g_int)
