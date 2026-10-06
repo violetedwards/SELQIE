@@ -21,12 +21,7 @@ def select(selected_space, interacting_space, h, g, selected_c):
     keep = min(max(1, len(interacting_space) // 5), len(interacting_space))
     new_dets = interacting_space[order[:keep]]
 
-    # avoid duplicates
-    out = []
-    seen = {d.bitstring for d in selected_space}
-    for d in new_dets:
-        if d.bitstring not in seen:
-            out.append(d)
-            seen.add(d.bitstring)
+    # avoid duplicates against the already selected space
+    new_dets = slq.determinants.unique_dets(new_dets, selected_space)
 
-    return np.array(list(selected_space) + out, dtype=object)
+    return np.append(selected_space, new_dets)

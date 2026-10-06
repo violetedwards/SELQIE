@@ -103,11 +103,30 @@ def initial_selected_space(ref_det: determinant) -> np.array:
     return np.array([ref_det])
 
 
-def unique_dets(det_list):
-    bitstring_list = np.array([])
+def unique_dets(det_list, existing=None):
+    """
+    Return the determinant list with duplicates removed while preserving the
+    first occurrence of each bitstring.
+
+    ``existing`` may be passed to exclude determinants that are already in the
+    selected space.
+    """
+    if det_list is None or len(det_list) == 0:
+        return np.array([], dtype=object)
+
+    seen = np.array([])
+    if existing is not None:
+        for det in existing:
+            if det is not None:
+                seen = np.append(seen,det.bitstring)
+
+    unique_det_list = np.array([])
     for det in det_list:
-        bitstring_list = np.append(bitstring_list, det.bitstring)
-    unique_bitstring_list, unique_index = np.unique(bitstring_list, return_index=True)
-    unique_det_list = np.take(det_list, unique_index)
+        if det is None:
+            continue
+        if det.bitstring in seen:
+            continue
+        seen = np.append(seen,det.bitstring)
+        unique_det_list = np.append(unique_det_list,det)
 
     return unique_det_list
