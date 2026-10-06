@@ -15,7 +15,7 @@ mol.basis = 'sto3g'
 mol.build()
 
 n_alpha, n_beta = mol.nelec
-settings = slq.config.settings(n_up=n_alpha,n_down=n_beta,conv=1e-6,cmin=1e-6)
+settings = slq.config.settings(sel_method="test",n_up=n_alpha,n_down=n_beta,conv=1e-6,cmin=1e-6)
 
 energy = "energy:"
 

@@ -11,6 +11,7 @@ def hello():
 #object for holding computation settings
 @dataclass
 class settings:
+    sel_method: str
     n_up: int
     n_down: int
     test: "str" = None

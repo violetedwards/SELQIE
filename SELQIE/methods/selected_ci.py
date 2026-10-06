@@ -23,7 +23,7 @@ def add_to_selected_space(algorithm: str,selected_space: np.array,interacting_sp
     new_selected_space  np.array[slq.determimants.determinant, ...]
                         the selected space after additions
     """
-    if algorithm == "dumb":
+    if algorithm == "test":
         return slq.methods.selection.test.select(selected_space, interacting_space,h,g,selected_c)
 
 def solve(
@@ -77,7 +77,7 @@ def solve(
 
         #apply selection algorithm to add to seleced space
         #print("performing selection...")
-        selected_space = add_to_selected_space("dumb", selected_space, interacting_space, selected_E_old, selected_c_old, h_int, g_int)
+        selected_space = add_to_selected_space(settings.sel_method, selected_space, interacting_space, selected_E_old, selected_c_old, h_int, g_int)
 
         #get hamiltonian for new slected space
         selected_space_H = slq.hamiltonian.build_hamiltonian(selected_space, h_int, g_int)
