@@ -21,7 +21,7 @@ class determinant:
         """
         bitstring = 0
         for orbital in occupations:
-            bitstring = bitstring | (1<<orbital) 
+            bitstring = (bitstring | (1<<orbital))
         return self(bitstring, n_spin_orbitals)
 
     @property

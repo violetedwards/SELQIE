@@ -5,6 +5,7 @@ import pyscf # type: ignore[reportMissingImports]
 
 slq.config.hello()
 
+
 mol = pyscf.gto.Mole()
 mol.verbose = 0
 mol.atom = [

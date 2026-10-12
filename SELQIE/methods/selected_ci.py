@@ -56,11 +56,19 @@ def solve(
     spin = mf.mol.spin
     nuc_replusion = mf.mol.energy_nuc()
 
+    #transform spatial orbital integrals into spin orbital integrals
+    h_int, g_int = slq.hamiltonian.space_to_spin_eints(eint1,eint2)
+
+    print(n_orb)
+    print(np.shape(h_int))
+    print(np.shape(g_int))
+
+    #----------------------------------------
+
     #generate reference determinant
     ref_det = slq.determinants.reference_determinant(n_orb, settings.n_up, settings.n_down)
 
-    #transform spatial orbital integrals into spin orbital integrals
-    h_int, g_int = slq.hamiltonian.space_to_spin_eints(eint1,eint2)
+  
 
     #set initial selected space
     selected_space = slq.determinants.initial_selected_space(ref_det)
