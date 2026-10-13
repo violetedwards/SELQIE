@@ -1,0 +1,16 @@
+python module selected_ci
+    interface
+        subroutine solve(n_orb, n_up, n_down, n_irreps, orbital_irreps, irrep_products, &
+                         target_irrep, h_int, g_int, nuc_rep, energy)
+            integer intent(in), required :: n_orb
+            integer intent(in), required :: n_irreps
+            integer intent(in) :: n_up, n_down, target_irrep
+            integer dimension(n_orb), intent(in) :: orbital_irreps
+            integer dimension(n_irreps,n_irreps), intent(in) :: irrep_products
+            double precision dimension(2*n_orb,2*n_orb), intent(in) :: h_int
+            double precision dimension(2*n_orb,2*n_orb,2*n_orb,2*n_orb), intent(in) :: g_int
+            double precision intent(in) :: nuc_rep
+            double precision intent(out) :: energy
+        end subroutine solve
+    end interface
+end python module selected_ci

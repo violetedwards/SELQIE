@@ -32,6 +32,7 @@ class determinant:
 #create reference determinant
 def reference_determinant(n_orb: int, n_alpha: int, n_beta: int) -> determinant:
     occupations = np.append(np.arange(0,n_alpha), np.arange(n_orb, n_orb+n_beta))
+    print(occupations)
     return determinant.create(occupations, 2*n_orb)
 
 
