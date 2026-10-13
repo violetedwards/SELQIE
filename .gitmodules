@@ -1,0 +1,3 @@
+[submodule "Fortran/Fortran_Davidson"]
+	path = Fortran/Fortran_Davidson
+	url = https://github.com/NLESC-JCER/Fortran_Davidson.git
