@@ -11,9 +11,10 @@ def hello():
 #object for holding computation settings
 @dataclass
 class settings:
-    sel_method: str
+    method: str
     n_up: int
     n_down: int
+    sel_method: str = None
     test: "str" = None
     conv: float = 1e-8
     cmin: float = 1e-3

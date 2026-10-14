@@ -202,4 +202,45 @@ contains
         end do
     end subroutine build_hamiltonian
 
+    subroutine lowest_eigenvalue(h_matrix, n_basis, e_low, success)
+        integer, intent(in) :: n_basis
+        real(kind=dp), intent(inout) :: h_matrix(n_basis, n_basis)  ! destroyed by dsyevr
+        real(kind=dp), intent(out) :: e_low
+        logical, intent(out) :: success
+        integer :: info, lwork, liwork, m, il, iu
+        real(kind=dp) :: vl, vu, abstol
+        real(kind=dp), allocatable :: eval(:), z(:,:), work(:)
+        integer, allocatable :: isuppz(:), iwork(:)
+
+        allocate(eval(n_basis))
+        allocate(z(n_basis, 1))
+        allocate(isuppz(2*n_basis))
+        allocate(work(1))
+        allocate(iwork(1))
+        lwork = -1
+        liwork = -1
+        vl = 0.0_dp
+        vu = 0.0_dp
+        abstol = 0.0_dp
+        il = 1
+        iu = 1
+        call dsyevr('V', 'I', 'U', n_basis, h_matrix, n_basis, vl, vu, il, iu, abstol, m, &
+                eval, z, n_basis, isuppz, work, lwork, iwork, liwork, info)
+        lwork = max(1, int(work(1)))
+        liwork = max(1, iwork(1))
+        deallocate(work)
+        deallocate(iwork)
+        allocate(work(lwork))
+        allocate(iwork(liwork))
+        call dsyevr('V', 'I', 'U', n_basis, h_matrix, n_basis, vl, vu, il, iu, abstol, m, &
+                eval, z, n_basis, isuppz, work, lwork, iwork, liwork, info)
+
+        success = (info == 0 .and. m == 1)
+        if (success) then
+            e_low = eval(1)
+        else
+            e_low = 0.0_dp
+        end if
+    end subroutine lowest_eigenvalue
+
 end module hamiltonian

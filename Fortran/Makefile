@@ -7,7 +7,7 @@ LDFLAGS ?=
 SRC_DIR := .
 BUILD_DIR := $(SRC_DIR)
 
-FORTRAN_SOURCES := $(SRC_DIR)/constants.f90 $(SRC_DIR)/determinants.f90 $(SRC_DIR)/hamiltonian.f90 $(SRC_DIR)/selected_ci.f90
+FORTRAN_SOURCES := $(SRC_DIR)/constants.f90 $(SRC_DIR)/determinants.f90 $(SRC_DIR)/hamiltonian.f90 $(SRC_DIR)/main.f90
 OBJECTS := $(patsubst $(SRC_DIR)/%.f90,$(BUILD_DIR)/%.o,$(FORTRAN_SOURCES))
 MODULES := $(BUILD_DIR)/*.mod
 
