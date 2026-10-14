@@ -7,6 +7,7 @@ fortran_sources = files(
   'constants.f90',
   'determinants.f90',
   'hamiltonian.f90',
+  'selection.f90',
   'methods.f90',
   'main.f90',
 )

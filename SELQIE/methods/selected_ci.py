@@ -51,7 +51,10 @@ def solve(
     """
     Solve using Selected CI.
     """
-    print("Solving")
+    if settings.method == "sci":
+        print(f"Solving {settings.method} {settings.sel_method}")
+    else:
+        print(f"Solving {settings.method}")
 
     #Run initial HF calculation
     mf = mol.RHF().run()
@@ -70,7 +73,7 @@ def solve(
     #transform spatial orbital integrals into spin orbital integrals
     h_int, g_int = slq.hamiltonian.space_to_spin_eints(eint1,eint2)
 
-    energy = _selected_ci.solve(settings.method, settings.sel_method, n_orb, settings.n_up, settings.n_down, h_int, g_int, nuc_replusion)
+    energy = _selected_ci.solve(settings.method, settings.sel_method, n_orb, settings.n_up, settings.n_down, h_int, g_int, nuc_replusion, settings.conv, settings.hci_epsilon or 0.0, settings.cmin)
     return energy, 1
 
     #----------------------------------------

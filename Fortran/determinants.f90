@@ -238,3 +238,35 @@ subroutine get_connected_dets(ref_det, n_words, n_spin_orbs, order, connected_de
             end do
         end if
 end subroutine get_connected_dets
+
+subroutine append_unique_dets(dets, n_dets, candidates, n_candidates, n_words)
+        implicit none
+
+        integer(kind = 8), allocatable, intent(inout) :: dets(:,:)
+        integer, intent(inout) :: n_dets
+        integer(kind = 8), intent(in) :: candidates(:,:)
+        integer, intent(in) :: n_candidates, n_words
+
+        integer(kind = 8), allocatable :: grown(:,:)
+        integer :: i, j
+        logical :: duplicate
+
+        do i = 1, n_candidates
+            duplicate = .false.
+            do j = 1, n_dets
+                if (all(dets(:, j) == candidates(:, i))) then
+                    duplicate = .true.
+                    exit
+                end if
+            end do
+            if (duplicate) cycle
+
+            if (n_dets + 1 > size(dets, 2)) then
+                allocate(grown(n_words, max(2 * size(dets, 2), 8)))
+                grown(:, 1:n_dets) = dets(:, 1:n_dets)
+                call move_alloc(grown, dets)
+            end if
+            n_dets = n_dets + 1
+            dets(:, n_dets) = candidates(:, i)
+        end do
+end subroutine append_unique_dets

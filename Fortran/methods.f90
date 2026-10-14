@@ -1,9 +1,140 @@
 module methods
     use constants
     use hamiltonian
+    use selection
     implicit none
 
 contains
+
+    subroutine sci(n_orb, n_up, n_down, n_words, n_spin_orbs, n_basis, h, g, sel_method, conv, epsilon, cmin, energy, success)
+        integer, intent(in) :: n_orb, n_up, n_down, n_words, n_spin_orbs
+        real(kind = dp), intent(in) :: h(:,:), conv, epsilon, cmin
+        real(kind = dp), intent(in) :: g(:,:,:,:)
+        real(kind = dp), intent(out) :: energy
+        character(len=*), intent(in) :: sel_method
+        integer, intent(out) :: n_basis
+        logical, intent(out) :: success
+
+        !local variables, allocatable
+        integer(kind = 8), allocatable :: selected_space(:,:), ref_det(:)
+        real(kind = dp), allocatable :: sel_hamiltonian(:,:), sel_c(:), old_c(:), new_c(:)
+        
+        !local variables, non-allocatable
+        logical :: converged
+        integer :: iteration, n_sel_space
+        real(kind = dp) :: sel_e, old_e, new_e
+
+        !get HF reference determinant
+        n_basis = 0
+        allocate(ref_det(n_words))
+        ref_det = 0_8
+        call reference_determinant(n_orb, n_up, n_down, ref_det, n_words)
+
+        !get initial selected space
+        allocate(selected_space(n_words,1))
+        selected_space(:,1) = ref_det
+        n_sel_space = 1
+
+        !main loop initial vars
+        converged = .false.
+        iteration = 0
+
+        !main loop
+        do while (converged .eqv. .false.)
+
+            write(*, '(A,I0)') "Iteration ", iteration
+
+            !get selected space hamiltonian
+            allocate(sel_hamiltonian(n_sel_space,n_sel_space))
+            call build_hamiltonian(selected_space, n_sel_space, n_words, n_spin_orbs, h, g, sel_hamiltonian)
+
+            !diagonalise selected hamiltonian
+            allocate(sel_c(n_sel_space))
+            call lowest_eigenvalue(sel_hamiltonian, n_sel_space, sel_e, success, eigenvector = sel_c)
+            deallocate(sel_hamiltonian)
+            if (.not. success) return
+
+            !rename variables
+            old_e = sel_e
+            allocate(old_c(n_sel_space))
+            old_c = sel_c
+            deallocate(sel_c)
+
+            !apply selection algorithm to add to selected space
+            call add_selected_dets(sel_method, selected_space, n_sel_space, n_words, old_e, old_c, n_spin_orbs, h, g, epsilon)
+
+            !get selected space hamiltonian
+            allocate(sel_hamiltonian(n_sel_space,n_sel_space))
+            call build_hamiltonian(selected_space, n_sel_space, n_words, n_spin_orbs, h, g, sel_hamiltonian)
+
+            !diagonalise selected hamiltonian
+            allocate(sel_c(n_sel_space))
+            call lowest_eigenvalue(sel_hamiltonian, n_sel_space, sel_e, success, eigenvector = sel_c)
+            deallocate(sel_hamiltonian)
+            if (.not. success) return
+
+            !rename variables
+            new_e = sel_e
+            allocate(new_c(n_sel_space))
+            new_c = sel_c
+            deallocate(sel_c)
+            
+            !check convergence
+            if (abs(old_e-new_e) < conv) then
+                converged = .true.
+            end if
+
+            !prune if not converged
+            if (converged .eqv. .false.) then
+                call prune(selected_space, n_sel_space, n_words, new_c, cmin)
+            end if
+
+            !getting ready for next loop
+            deallocate(old_c, new_c)
+            iteration = iteration + 1
+ 
+            
+
+        end do
+
+        !outputs
+        write(*, '(A,I0)') "Energy converged"
+        write(*, '(A,I0)') "----------------------------------------------------------"
+        energy = new_e
+        n_basis = n_sel_space
+
+
+
+    end subroutine
+
+
+
+
+    subroutine prune(selected_space, n_sel_space, n_words, c, cmin)
+        integer(kind = 8), allocatable, intent(inout) :: selected_space(:,:)
+        integer, intent(inout) :: n_sel_space
+        integer, intent(in) :: n_words
+        real(kind = dp), intent(in) :: c(:), cmin
+
+        integer(kind = 8), allocatable :: kept(:,:)
+        integer :: i, n_kept
+
+        allocate(kept(n_words, count(abs(c) >= cmin)))
+        n_kept = 0
+        do i = 1, n_sel_space
+            if (abs(c(i)) >= cmin) then
+                n_kept = n_kept + 1
+                kept(:, n_kept) = selected_space(:, i)
+            end if
+        end do
+
+        call move_alloc(kept, selected_space)
+        n_sel_space = n_kept
+
+    end subroutine prune
+
+
+
 
     subroutine cisd(n_orb, n_up, n_down, n_words, n_spin_orbs, h_int, g_int, e_low, n_basis, success)
         integer, intent(in) :: n_orb, n_up, n_down, n_words, n_spin_orbs

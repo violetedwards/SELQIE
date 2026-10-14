@@ -202,11 +202,12 @@ contains
         end do
     end subroutine build_hamiltonian
 
-    subroutine lowest_eigenvalue(h_matrix, n_basis, e_low, success)
+    subroutine lowest_eigenvalue(h_matrix, n_basis, e_low, success, eigenvector)
         integer, intent(in) :: n_basis
         real(kind=dp), intent(inout) :: h_matrix(n_basis, n_basis)  ! destroyed by dsyevr
         real(kind=dp), intent(out) :: e_low
         logical, intent(out) :: success
+        real(kind=dp), intent(out), optional :: eigenvector(n_basis)
         integer :: info, lwork, liwork, m, il, iu
         real(kind=dp) :: vl, vu, abstol
         real(kind=dp), allocatable :: eval(:), z(:,:), work(:)
@@ -240,6 +241,14 @@ contains
             e_low = eval(1)
         else
             e_low = 0.0_dp
+        end if
+
+        if (present(eigenvector)) then
+            if (success) then
+                eigenvector = z(:, 1)
+            else
+                eigenvector = 0.0_dp
+            end if
         end if
     end subroutine lowest_eigenvalue
 

@@ -1,6 +1,6 @@
 !   FILE: main.f90
 
-subroutine solve(method, sel_method, n_orb, n_up, n_down, h_int, g_int, nuc_rep, energy, n_basis)
+subroutine solve(method, sel_method, n_orb, n_up, n_down, h_int, g_int, nuc_rep, conv, epsilon, cmin, energy, n_basis)
 !
 !       MAIN SOLVING ROUTINE
 !
@@ -13,10 +13,10 @@ subroutine solve(method, sel_method, n_orb, n_up, n_down, h_int, g_int, nuc_rep,
         character(len=*) :: method, sel_method
         real(kind = dp) :: h_int(:,:)
         real(kind = dp) :: g_int(:,:,:,:)
-        real(kind = dp) :: nuc_rep, energy, e_low
+        real(kind = dp) :: nuc_rep, energy, e_low, conv, epsilon, cmin
         logical :: success
 
-!f2py   intent(in) n_orb, n_up, n_down, h_int, g_int, nuc_rep, method, sel_method
+!f2py   intent(in) n_orb, n_up, n_down, h_int, g_int, nuc_rep, method, sel_method, conv, epsilon, cmin
 !f2py   intent(out) energy, n_basis
 
         !get determinant words ready
@@ -30,7 +30,7 @@ subroutine solve(method, sel_method, n_orb, n_up, n_down, h_int, g_int, nuc_rep,
         else if (method == "fci") then
             call fci(n_orb, n_up, n_down, n_words, n_spin_orbs, h_int, g_int, e_low, n_basis, success)
         else if (method == "sci") then
-            !call sci()
+            call sci(n_orb, n_up, n_down, n_words, n_spin_orbs, n_basis, h_int, g_int, sel_method, conv, epsilon, cmin, e_low, success)
         end if
 
         !output
