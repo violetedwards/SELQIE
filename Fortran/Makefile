@@ -1,7 +1,7 @@
 PYTHON ?= python3
 F2PY ?= $(PYTHON) -m numpy.f2py
 FC ?= gfortran
-FFLAGS ?= -Ofast -ffree-line-length-none -ffixed-line-length-none -Wall
+FFLAGS ?= -O0 -ffree-line-length-none -ffixed-line-length-none -Wno-maybe-uninitialized
 LDFLAGS ?=
 
 SRC_DIR := .

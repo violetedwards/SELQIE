@@ -6,7 +6,7 @@ import pyscf # type: ignore[reportMissingImports]
 import numpy as np # type: ignore[reportMissingImports]
 import scipy as sp # type: ignore[reportMissingImports]
 
-_fortran_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'Fortran'))
+_fortran_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'Fortran', 'build'))
 if os.path.isdir(_fortran_dir) and _fortran_dir not in sys.path:
     sys.path.insert(0, _fortran_dir)
 
@@ -14,7 +14,7 @@ try:
     _selected_ci = __import__('selected_ci')
 except ModuleNotFoundError as exc:
     raise ModuleNotFoundError(
-        "The Fortran extension is not built yet. Run 'make f2py' in the Fortran directory first."
+        "The Fortran extension is not built yet. Run 'meson setup build && meson compile -C build' in the Fortran directory first."
     ) from exc
 
 def add_selected_dets(algorithm: str,selected_space: np.array,selected_E: float,selected_c: np.array, h: np.array, g: np.array, settings:slq.config.settings) -> np.array:

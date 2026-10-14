@@ -1,4 +1,6 @@
 {
+    "debug.allowBreakpointsEverywhere": true,
+    "python.defaultInterpreterPath": "/home/ie4005/anaconda3/bin/python3",
     "python.REPL.enableREPLSmartSend": false,
     "github.copilot.chat.tools.viewImage.enabled": false,
     "github.copilot.chat.copilotDebugCommand.enabled": false,

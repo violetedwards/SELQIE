@@ -19,7 +19,7 @@ mol.symmetry = "c2v"
 mol.build()
 
 n_alpha, n_beta = mol.nelec
-settings = slq.config.settings(sel_method="hci",n_up=n_alpha,n_down=n_beta,conv=1e-6,cmin=1e-6, hci_epsilon=0.1)
+settings = slq.config.settings(sel_method="hci",n_up=n_alpha,n_down=n_beta,conv=1e-9,cmin=1e-6, hci_epsilon=0.1)
 
 
 
@@ -56,17 +56,17 @@ t6 = time.time()
 energystr = "energy:"
 timestr = "time:"
 detstr = "dets:"
-print(f"\nSELQIE HCI {detstr:<10} {sci_len}")
+print(f"\nSELQIE CISD {detstr:<9} {sci_len}")
 print(f"PYSCF CISD {detstr:<10} {len(cisd_obj.ci)}")
 print(f"PYSCF FCI {detstr:<11} {raw_fci_dets}\n")
 
 
 print(f"SELQIE conv {energystr:<10} {settings.conv:.9f} Ha")
-print(f"SELQIE HCI {energystr:<9} {sci_e:.9f} Ha")
+print(f"SELQIE CISD {energystr:<8} {sci_e:.9f} Ha")
 print(f"PySCF CISD {energystr:<9} {cisd_obj.e_tot} Ha")
 print(f"PySCF FCI {energystr:<10} {fci_e} Ha\n")
 
-print(f"SELQIE HCI {timestr:<10} {t2-t1:.3f} secs")
+print(f"SELQIE CISD {timestr:<9} {t2-t1:.3f} secs")
 print(f"PySCF CISD {timestr:<10} {t4-t3:.3f} secs")
 print(f"PySCF FCI {timestr:<11} {t6-t5:.3f} secs\n")
 

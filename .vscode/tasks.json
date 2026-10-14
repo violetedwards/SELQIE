@@ -1,0 +1,12 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build-fortran",
+            "type": "shell",
+            "command": "meson setup --reconfigure build && meson compile -C build",
+            "options": { "cwd": "${workspaceFolder}/Fortran" },
+            "problemMatcher": "$gcc"
+        }
+    ]
+}
