@@ -49,7 +49,6 @@ subroutine determinant_bit_to_occ(bitstring, n_words, n_spin_orbs, occupations, 
 
 end subroutine determinant_bit_to_occ
 
-! Build the closed-shell-ordered reference determinant from alpha and beta occupations.
 subroutine reference_determinant(n_orb, n_alpha, n_beta, bitstring, n_words)
         implicit none
 
@@ -72,7 +71,6 @@ subroutine reference_determinant(n_orb, n_alpha, n_beta, bitstring, n_words)
 
 end subroutine reference_determinant
 
-! Test whether a spin orbital is set in a multiword determinant bitstring.
 logical function determinant_is_occupied(bitstring, n_words, orbital)
         implicit none
         integer, intent(in) :: n_words, orbital
@@ -88,39 +86,6 @@ logical function determinant_is_occupied(bitstring, n_words, orbital)
         end if
 end function determinant_is_occupied
 
-! Compact a determinant basis to states with the requested total point-group irrep.
-subroutine filter_dets_by_irrep(det_basis, n_det, n_orb, n_spin_orbs, n_irreps, &
-                                orbital_irreps, irrep_products, target_irrep)
-        implicit none
-
-        integer, intent(in) :: n_orb, n_spin_orbs, n_irreps, target_irrep
-        integer, intent(in) :: orbital_irreps(n_orb), irrep_products(n_irreps, n_irreps)
-        integer, intent(inout) :: n_det
-        integer(kind=8), intent(inout) :: det_basis(:,:)
-        integer :: i, filtered_count, determinant_irrep, orbital, spatial_orbital, irrep
-        integer :: word_index, bit_index
-
-        filtered_count = 0
-        do i = 1, n_det
-            determinant_irrep = 1
-            do orbital = 1, n_spin_orbs
-                word_index = (orbital - 1) / 64 + 1
-                bit_index = mod(orbital - 1, 64)
-                if (btest(det_basis(word_index, i), bit_index)) then
-                    spatial_orbital = mod(orbital - 1, n_orb) + 1
-                    irrep = orbital_irreps(spatial_orbital)
-                    determinant_irrep = irrep_products(determinant_irrep, irrep)
-                end if
-            end do
-            if (determinant_irrep == target_irrep) then
-                filtered_count = filtered_count + 1
-                if (filtered_count < i) det_basis(:, filtered_count) = det_basis(:, i)
-            end if
-        end do
-        n_det = filtered_count
-end subroutine filter_dets_by_irrep
-
-! Append a determinant, growing the allocated list when its capacity is reached.
 subroutine append_connected_det(candidate, connected_dets, n_connected, capacity, n_words)
         implicit none
         integer, intent(in) :: n_words
@@ -145,7 +110,6 @@ subroutine append_connected_det(candidate, connected_dets, n_connected, capacity
         connected_dets(:, n_connected) = candidate
 end subroutine append_connected_det
 
-! Generate spin-conserving determinants at the requested excitation order.
 subroutine get_connected_dets(ref_det, n_words, n_spin_orbs, order, connected_dets, n_connected)
         implicit none
 
@@ -181,7 +145,6 @@ subroutine get_connected_dets(ref_det, n_words, n_spin_orbs, order, connected_de
             return
         end if
 
-        ! Partition the reference determinant into occupied and virtual orbitals.
         n_occ = 0
         n_virt = 0
         do i = 1, n_spin_orbs
@@ -199,7 +162,6 @@ subroutine get_connected_dets(ref_det, n_words, n_spin_orbs, order, connected_de
             return
         end if
 
-        ! Generate spin-conserving single excitations from the reference.
         if (order == 1) then
             max_conn = max(1, n_occ * n_virt)
         else if (order == 2) then
@@ -223,7 +185,6 @@ subroutine get_connected_dets(ref_det, n_words, n_spin_orbs, order, connected_de
                         candidate((removed_idx(1)-1)/64 + 1) = ibclr(candidate((removed_idx(1)-1)/64 + 1), mod(removed_idx(1)-1,64))
                         candidate((added_idx(1)-1)/64 + 1) = ibset(candidate((added_idx(1)-1)/64 + 1), mod(added_idx(1)-1,64))
 
-                        ! Keep each generated determinant only once.
                         duplicate = .false.
                         do j = 1, n_connected
                             if (all(connected_dets(:, j) == candidate)) then
@@ -241,7 +202,6 @@ subroutine get_connected_dets(ref_det, n_words, n_spin_orbs, order, connected_de
             end do
         end if
 
-        ! Generate spin-conserving double excitations from the reference.
         if (order == 2) then
             do a = 1, n_occ - 1
                 do i = a + 1, n_occ
@@ -259,7 +219,6 @@ subroutine get_connected_dets(ref_det, n_words, n_spin_orbs, order, connected_de
                                 candidate((removed_idx(2)-1)/64 + 1) = ibclr(candidate((removed_idx(2)-1)/64 + 1), mod(removed_idx(2)-1,64))
                                 candidate((added_idx(2)-1)/64 + 1) = ibset(candidate((added_idx(2)-1)/64 + 1), mod(added_idx(2)-1,64))
 
-                                ! Avoid appending a determinant already in the list.
                                 duplicate = .false.
                                 do k = 1, n_connected
                                     if (all(connected_dets(:, k) == candidate)) then

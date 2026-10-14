@@ -70,37 +70,7 @@ def solve(
     #transform spatial orbital integrals into spin orbital integrals
     h_int, g_int = slq.hamiltonian.space_to_spin_eints(eint1,eint2)
 
-    if mf.mol.symmetry:
-        from pyscf.symm import addons, param
-
-        irrep_ids = np.asarray(list(param.IRREP_ID_TABLE[mf.mol.groupname].values()), dtype=np.int32)
-        irrep_index = {int(irrep_id): index + 1 for index, irrep_id in enumerate(irrep_ids)}
-        orbital_irrep_ids = np.asarray(mf.get_orbsym(mo_coeff), dtype=np.int32)
-        orbital_irreps = np.asarray([irrep_index[int(irrep_id)] for irrep_id in orbital_irrep_ids], dtype=np.int32)
-        n_irreps = len(irrep_ids)
-        irrep_products = np.empty((n_irreps, n_irreps), dtype=np.int32, order="F")
-        for i, irrep_a in enumerate(irrep_ids):
-            for j, irrep_b in enumerate(irrep_ids):
-                product_id = addons.direct_prod(
-                    np.asarray([irrep_a]), np.asarray([irrep_b]), groupname=mf.mol.groupname
-                )[0, 0]
-                irrep_products[i, j] = irrep_index[int(product_id)]
-
-        target_irrep = irrep_index[int(irrep_ids[0])]
-        occupied_orbitals = list(range(settings.n_up)) + list(range(settings.n_down))
-        for orbital in occupied_orbitals:
-            irrep = orbital_irreps[orbital]
-            target_irrep = irrep_products[target_irrep - 1, irrep - 1]
-    else:
-        n_irreps = 1
-        orbital_irreps = np.ones(n_orb, dtype=np.int32)
-        irrep_products = np.ones((1, 1), dtype=np.int32, order="F")
-        target_irrep = 1
-
-    energy = _selected_ci.solve(
-        n_orb, settings.n_up, settings.n_down, n_irreps, orbital_irreps,
-        irrep_products, target_irrep, h_int, g_int, nuc_replusion
-    )
+    energy = _selected_ci.solve(n_orb, settings.n_up, settings.n_down, h_int, g_int, nuc_replusion)
     return energy, 1
 
     #----------------------------------------
