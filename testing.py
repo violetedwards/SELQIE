@@ -14,14 +14,13 @@ O   0.000000   0.000000   0.000000
 H   0.000000   0.758602   0.504284
 H   0.000000  -0.758602   0.504284
 """
-mol.basis = 'sto-3g'
+#mol.basis = 'sto-3g'
+mol.basis = "6-31g*"
 mol.symmetry = "c2v"
 mol.build()
 
 n_alpha, n_beta = mol.nelec
-settings = slq.config.settings(method="cisd",n_up=n_alpha,n_down=n_beta)
-fci_settings = slq.config.settings(method="fci",n_up=n_alpha,n_down=n_beta,)
-hci_settings = slq.config.settings(method="sci",sel_method="hci",n_up=n_alpha,n_down=n_beta,conv=1e-9,cmin=1e-6, hci_epsilon=0.01)
+hci_settings = slq.config.settings(method="sci",sel_method="hci",n_up=n_alpha,n_down=n_beta,conv=1e-6,cmin=1e-6, hci_epsilon=0.001)
 
 
 def timed(fn):
@@ -31,23 +30,14 @@ def timed(fn):
     return result, time.perf_counter() - t
 
 # every timing below is end-to-end from `mol` (HF included), so the methods are comparable
-def pyscf_cisd():
-    mf = mol.RHF().run()
-    return mf, mf.CISD().run()
-
 def pyscf_fci():
     mf = mol.RHF().run()
     return mf, pyscf.fci.FCI(mf).kernel()[0]
 
-# untimed warm-up so one-time library start-up costs are not charged to the first method
-pyscf_cisd()
-pyscf_fci()
 
-slq_out, t_slq_cisd = timed(lambda: slq.methods.selected_ci.solve(mol, settings)[0])
-slq_fci_out, t_slq_fci = timed(lambda: slq.methods.selected_ci.solve(mol, fci_settings)[0])
 slq_hci_out, t_slq_hci = timed(lambda: slq.methods.selected_ci.solve(mol, hci_settings)[0])
-(mf, cisd_obj), t_pyscf_cisd = timed(pyscf_cisd)
-(_, fci_e), t_pyscf_fci = timed(pyscf_fci)
+
+(mf, fci_e), t_pyscf_fci = timed(pyscf_fci)
 
 n_orb = mf.mo_coeff.shape[1]
 n_alpha, n_beta = mf.mol.nelec
@@ -57,23 +47,16 @@ raw_fci_dets = math.comb(n_orb, n_alpha) * math.comb(n_orb, n_beta)
 energystr = "energy:"
 timestr = "time:"
 detstr = "dets:"
-print(f"\nSELQIE CISD {detstr:<9} {slq_out[1]}")
-print(f"PYSCF CISD {'CSFs:':<10} {len(cisd_obj.ci)}")
-print(f"SELQIE FCI {detstr:<10} {slq_fci_out[1]}")
-print(f"PYSCF FCI {detstr:<11} {raw_fci_dets}")
-print(f"SELQIE HCI {detstr:<10} {slq_hci_out[1]}\n")
+colon = ":"
+print(f"\nPYSCF FCI {detstr:<11} {raw_fci_dets}")
+print(f"SELQIE HCI {detstr:<10} {slq_hci_out[1]}")
 
+print(f"SELQIE conv {energystr:<10} {hci_settings.conv:.1g} Ha")
+print(f"SELQIE HCI epsilon {colon:<3} {hci_settings.hci_epsilon} Ha\n")
 
-print(f"SELQIE conv {energystr:<10} {settings.conv:.9f} Ha")
-print(f"SELQIE CISD {energystr:<8} {slq_out[0]:.9f} Ha")
-print(f"PySCF CISD {energystr:<9} {cisd_obj.e_tot} Ha")
-print(f"SELQIE FCI {energystr:<9} {slq_fci_out[0]:.9f} Ha")
 print(f"PySCF FCI {energystr:<10} {fci_e} Ha")
 print(f"SELQIE HCI {energystr:<9} {slq_hci_out[0]:.9f} Ha\n")
 
-print(f"SELQIE CISD {timestr:<9} {t_slq_cisd:.3f} secs")
-print(f"PySCF CISD {timestr:<10} {t_pyscf_cisd:.3f} secs")
-print(f"SELQIE FCI {timestr:<10} {t_slq_fci:.3f} secs")
 print(f"PySCF FCI {timestr:<11} {t_pyscf_fci:.3f} secs")
 print(f"SELQIE HCI {timestr:<10} {t_slq_hci:.3f} secs\n")
 

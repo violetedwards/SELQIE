@@ -19,9 +19,11 @@ subroutine solve(method, sel_method, n_orb, n_up, n_down, h_int, g_int, nuc_rep,
 !f2py   intent(in) n_orb, n_up, n_down, h_int, g_int, nuc_rep, method, sel_method, conv, epsilon, cmin
 !f2py   intent(out) energy, n_basis
 
+
         !get determinant words ready
         n_spin_orbs = size(h_int, 1)
         n_words = ceiling(real(n_spin_orbs) / 64.0_dp)
+
 
         n_basis = 0
         success = .false.
@@ -30,7 +32,8 @@ subroutine solve(method, sel_method, n_orb, n_up, n_down, h_int, g_int, nuc_rep,
         else if (method == "fci") then
             call fci(n_orb, n_up, n_down, n_words, n_spin_orbs, h_int, g_int, e_low, n_basis, success)
         else if (method == "sci") then
-            call sci(n_orb, n_up, n_down, n_words, n_spin_orbs, n_basis, h_int, g_int, sel_method, conv, epsilon, cmin, e_low, success)
+            call sci(n_orb, n_up, n_down, n_words, n_spin_orbs, &
+                n_basis, h_int, g_int, sel_method, conv, epsilon, cmin, e_low, success)
         end if
 
         !output

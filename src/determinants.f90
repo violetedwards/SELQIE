@@ -1,4 +1,11 @@
-!   FILE: determinants.f90
+
+module determinants
+
+
+    use constants
+
+    implicit none
+    contains
 
 subroutine determinant_occ_to_bit(occupations, n_elec, n_spin_orbs, bitstring, n_words)
 !
@@ -110,78 +117,105 @@ subroutine append_connected_det(candidate, connected_dets, n_connected, capacity
         connected_dets(:, n_connected) = candidate
 end subroutine append_connected_det
 
-subroutine get_connected_dets(ref_det, n_words, n_spin_orbs, order, connected_dets, n_connected)
+subroutine get_connected_dets(ref_det, n_words, n_spin_orbs, order, &
+                              connected_dets, n_connected)
+
         implicit none
 
-        integer, intent(in) :: n_words, n_spin_orbs, order
+        integer, intent(in) :: n_words
+        integer, intent(in) :: n_spin_orbs
+        integer, intent(in) :: order
+
         integer(kind=8), intent(in) :: ref_det(n_words)
+
         integer(kind=8), allocatable, intent(out) :: connected_dets(:,:)
+
         integer, intent(out) :: n_connected
 
-        logical :: determinant_is_occupied
-        interface
-            subroutine append_connected_det(candidate, connected_dets, n_connected, capacity, n_words)
-                integer, intent(in) :: n_words
-                integer(kind=8), intent(in) :: candidate(n_words)
-                integer(kind=8), allocatable, intent(out) :: connected_dets(:,:)
-                integer, intent(inout) :: n_connected, capacity
-            end subroutine append_connected_det
-        end interface
 
         integer :: occupied(n_spin_orbs)
         integer :: virtual(n_spin_orbs)
-        integer :: n_occ, n_virt, i, j, a, b, k, capacity, max_conn
+
+        integer :: n_occ
+        integer :: n_virt
+
+        integer :: i,j,k
+        integer :: a,b
+
+        integer :: capacity
+        integer :: max_conn
+
         integer :: n_orb
-        integer :: removed_idx(order), added_idx(order)
+
+        ! fixed size - only singles and doubles supported
+        integer :: removed_idx(2)
+        integer :: added_idx(2)
+
         integer(kind=8) :: candidate(n_words)
+
         logical :: duplicate
 
         n_connected = 0
         capacity = 0
+
         n_orb = n_spin_orbs / 2
 
-        if (order <= 0) then
-            if (allocated(connected_dets)) deallocate(connected_dets)
-            return
-        end if
+        if (order <= 0) return
 
         n_occ = 0
         n_virt = 0
+
         do i = 1, n_spin_orbs
-            if (determinant_is_occupied(ref_det, n_words, i)) then
+
+            if (determinant_is_occupied(ref_det,n_words,i)) then
+
                 n_occ = n_occ + 1
                 occupied(n_occ) = i
+
             else
+
                 n_virt = n_virt + 1
                 virtual(n_virt) = i
+
             end if
+
         end do
 
-        if (order > min(n_occ, n_virt)) then
-            if (allocated(connected_dets)) deallocate(connected_dets)
-            return
-        end if
+        if (order > min(n_occ,n_virt)) return
 
         if (order == 1) then
-            max_conn = max(1, n_occ * n_virt)
+
+            max_conn = max(1,n_occ*n_virt)
+
         else if (order == 2) then
-            max_conn = max(1, (n_occ * (n_occ - 1) / 2) * (n_virt * (n_virt - 1) / 2))
+
+            max_conn = max(1, &
+                (n_occ*(n_occ-1)/2) * &
+                (n_virt*(n_virt-1)/2))
+
         else
+
             max_conn = 1
+
         end if
 
-        if (allocated(connected_dets)) deallocate(connected_dets)
-        allocate(connected_dets(n_words, max_conn))
+        allocate(connected_dets(n_words,max_conn))
+
         connected_dets = 0_8
+
         capacity = max_conn
 
+
+
         if (order == 1) then
+
             do a = 1, n_occ
                 removed_idx(1) = occupied(a)
                 do b = 1, n_virt
                     added_idx(1) = virtual(b)
                     if ((removed_idx(1) <= n_orb) .eqv. (added_idx(1) <= n_orb)) then
                         candidate = ref_det
+                    
                         candidate((removed_idx(1)-1)/64 + 1) = ibclr(candidate((removed_idx(1)-1)/64 + 1), mod(removed_idx(1)-1,64))
                         candidate((added_idx(1)-1)/64 + 1) = ibset(candidate((added_idx(1)-1)/64 + 1), mod(added_idx(1)-1,64))
 
@@ -193,14 +227,15 @@ subroutine get_connected_dets(ref_det, n_words, n_spin_orbs, order, connected_de
                             end if
                         end do
 
-                        if (.not. duplicate) then
-                            n_connected = n_connected + 1
-                            connected_dets(:, n_connected) = candidate
-                        end if
+                        n_connected = n_connected + 1
+                        connected_dets(:, n_connected) = candidate
+
                     end if
                 end do
             end do
         end if
+
+
 
         if (order == 2) then
             do a = 1, n_occ - 1
@@ -214,10 +249,14 @@ subroutine get_connected_dets(ref_det, n_words, n_spin_orbs, order, connected_de
                             if (merge(1, 0, removed_idx(1) <= n_orb) + merge(1, 0, removed_idx(2) <= n_orb) == &
                                 merge(1, 0, added_idx(1) <= n_orb) + merge(1, 0, added_idx(2) <= n_orb)) then
                                 candidate = ref_det
-                                candidate((removed_idx(1)-1)/64 + 1) = ibclr(candidate((removed_idx(1)-1)/64 + 1), mod(removed_idx(1)-1,64))
-                                candidate((added_idx(1)-1)/64 + 1) = ibset(candidate((added_idx(1)-1)/64 + 1), mod(added_idx(1)-1,64))
-                                candidate((removed_idx(2)-1)/64 + 1) = ibclr(candidate((removed_idx(2)-1)/64 + 1), mod(removed_idx(2)-1,64))
-                                candidate((added_idx(2)-1)/64 + 1) = ibset(candidate((added_idx(2)-1)/64 + 1), mod(added_idx(2)-1,64))
+                                candidate((removed_idx(1)-1)/64 + 1) = &
+                                    ibclr(candidate((removed_idx(1)-1)/64 + 1), mod(removed_idx(1)-1,64))
+                                candidate((added_idx(1)-1)/64 + 1) = &
+                                    ibset(candidate((added_idx(1)-1)/64 + 1), mod(added_idx(1)-1,64))
+                                candidate((removed_idx(2)-1)/64 + 1) = &
+                                    ibclr(candidate((removed_idx(2)-1)/64 + 1), mod(removed_idx(2)-1,64))
+                                candidate((added_idx(2)-1)/64 + 1) = &
+                                    ibset(candidate((added_idx(2)-1)/64 + 1), mod(added_idx(2)-1,64))
 
                                 duplicate = .false.
                                 do k = 1, n_connected
@@ -227,10 +266,10 @@ subroutine get_connected_dets(ref_det, n_words, n_spin_orbs, order, connected_de
                                     end if
                                 end do
 
-                                if (.not. duplicate) then
-                                    n_connected = n_connected + 1
-                                    connected_dets(:, n_connected) = candidate
-                                end if
+                                n_connected = n_connected + 1
+                                connected_dets(:, n_connected) = candidate
+
+                                
                             end if
                         end do
                     end do
@@ -270,3 +309,5 @@ subroutine append_unique_dets(dets, n_dets, candidates, n_candidates, n_words)
             dets(:, n_dets) = candidates(:, i)
         end do
 end subroutine append_unique_dets
+
+end module determinants

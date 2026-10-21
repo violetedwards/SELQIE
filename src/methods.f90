@@ -2,6 +2,8 @@ module methods
     use constants
     use hamiltonian
     use selection
+    use diagonalisers
+    use determinants
     implicit none
 
 contains
@@ -23,6 +25,7 @@ contains
         logical :: converged
         integer :: iteration, n_sel_space
         real(kind = dp) :: sel_e, old_e, new_e
+        real :: t1, t2
 
         !get HF reference determinant
         n_basis = 0
@@ -43,16 +46,22 @@ contains
         do while (converged .eqv. .false.)
 
             write(*, '(A,I0)') "Iteration ", iteration
+            write(*, '(A,I0)') "Current Sel Space ", n_sel_space
 
-            !get selected space hamiltonian
-            allocate(sel_hamiltonian(n_sel_space,n_sel_space))
-            call build_hamiltonian(selected_space, n_sel_space, n_words, n_spin_orbs, h, g, sel_hamiltonian)
-
-            !diagonalise selected hamiltonian
             allocate(sel_c(n_sel_space))
-            call lowest_eigenvalue(sel_hamiltonian, n_sel_space, sel_e, success, eigenvector = sel_c)
-            deallocate(sel_hamiltonian)
-            if (.not. success) return
+
+
+            call davidson_lowest( &
+                selected_space, &
+                n_sel_space, &
+                n_words, &
+                n_spin_orbs, &
+                h, &
+                g, &
+                sel_e, &
+                sel_c)
+
+            success = .true.
 
             !rename variables
             old_e = sel_e
@@ -61,17 +70,25 @@ contains
             deallocate(sel_c)
 
             !apply selection algorithm to add to selected space
+
             call add_selected_dets(sel_method, selected_space, n_sel_space, n_words, old_e, old_c, n_spin_orbs, h, g, epsilon)
 
-            !get selected space hamiltonian
-            allocate(sel_hamiltonian(n_sel_space,n_sel_space))
-            call build_hamiltonian(selected_space, n_sel_space, n_words, n_spin_orbs, h, g, sel_hamiltonian)
-
-            !diagonalise selected hamiltonian
             allocate(sel_c(n_sel_space))
-            call lowest_eigenvalue(sel_hamiltonian, n_sel_space, sel_e, success, eigenvector = sel_c)
-            deallocate(sel_hamiltonian)
-            if (.not. success) return
+
+
+            call davidson_lowest( &
+                selected_space, &
+                n_sel_space, &
+                n_words, &
+                n_spin_orbs, &
+                h, &
+                g, &
+                sel_e, &
+                sel_c)
+
+
+
+            success = .true.
 
             !rename variables
             new_e = sel_e
@@ -84,9 +101,12 @@ contains
                 converged = .true.
             end if
 
+
             !prune if not converged
             if (converged .eqv. .false.) then
+
                 call prune(selected_space, n_sel_space, n_words, new_c, cmin)
+
             end if
 
             !getting ready for next loop
@@ -144,17 +164,10 @@ contains
         integer, intent(out) :: n_basis
         logical, intent(out) :: success
 
-        interface
-            subroutine get_connected_dets(ref_det, n_words, n_spin_orbs, order, connected_dets, n_connected)
-                integer, intent(in) :: n_words, n_spin_orbs, order
-                integer(kind = 8), intent(in) :: ref_det(n_words)
-                integer(kind = 8), allocatable, intent(out) :: connected_dets(:,:)
-                integer, intent(out) :: n_connected
-            end subroutine get_connected_dets
-        end interface
+        
 
         integer :: n_singles, n_doubles
-        real(kind = dp), allocatable :: h_matrix(:,:)
+        real(kind = dp), allocatable :: eigvec(:)   
         integer(kind = 8), allocatable :: ref_det(:), det_basis(:,:), singles(:,:), doubles(:,:)
 
         !get HF reference determinant
@@ -172,12 +185,19 @@ contains
         if (n_singles > 0) det_basis(:, 2:1+n_singles) = singles(:, 1:n_singles)
         if (n_doubles > 0) det_basis(:, 2+n_singles:n_basis) = doubles(:, 1:n_doubles)
 
-        !build hamiltonian
-        allocate(h_matrix(n_basis, n_basis))
-        call build_hamiltonian(det_basis, n_basis, n_words, n_spin_orbs, h_int, g_int, h_matrix)
+        allocate(eigvec(n_basis))
 
-        !diagonalise
-        call lowest_eigenvalue(h_matrix, n_basis, e_low, success)
+        call davidson_lowest( &
+            det_basis, &
+            n_basis, &
+            n_words, &
+            n_spin_orbs, &
+            h_int, &
+            g_int, &
+            e_low, &
+            eigvec)
+
+        success = .true.
     end subroutine cisd
 
     subroutine fci(n_orb, n_up, n_down, n_words, n_spin_orbs, h_int, g_int, e_low, n_basis, success)
@@ -190,7 +210,7 @@ contains
 
         integer :: n_alpha_strings, n_beta_strings, ia, ib, idet, k, orb
         integer, allocatable :: alpha(:,:), beta(:,:)
-        real(kind = dp), allocatable :: h_matrix(:,:)
+        real(kind = dp), allocatable :: eigvec(:)
         integer(kind = 8), allocatable :: det_basis(:,:)
 
         !every alpha string paired with every beta string gives each determinant once
@@ -215,12 +235,19 @@ contains
             end do
         end do
 
-        !build hamiltonian
-        allocate(h_matrix(n_basis, n_basis))
-        call build_hamiltonian(det_basis, n_basis, n_words, n_spin_orbs, h_int, g_int, h_matrix)
+        allocate(eigvec(n_basis))
 
-        !diagonalise
-        call lowest_eigenvalue(h_matrix, n_basis, e_low, success)
+        call davidson_lowest( &
+            det_basis, &
+            n_basis, &
+            n_words, &
+            n_spin_orbs, &
+            h_int, &
+            g_int, &
+            e_low, &
+            eigvec)
+
+        success = .true.
     end subroutine fci
 
     subroutine combinations(n, k, combos, n_combos)

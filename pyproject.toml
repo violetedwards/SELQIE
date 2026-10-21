@@ -1,0 +1,23 @@
+[build-system]
+requires = [
+    "meson-python>=0.16",
+    "meson>=1.4",
+    "ninja",
+    "numpy>=2.0"
+]
+build-backend = "mesonpy"
+
+[project]
+name = "SELQIE"
+version = "0.1.0"
+description = "SELected Quantum Interacting Electrons Package"
+readme = "README.md"
+requires-python = ">=3.10"
+
+authors = [
+    { name = "Violet Edwards" }
+]
+
+dependencies = [
+    "numpy>=2.0"
+]
