@@ -14,8 +14,8 @@ O   0.000000   0.000000   0.000000
 H   0.000000   0.758602   0.504284
 H   0.000000  -0.758602   0.504284
 """
-#mol.basis = 'sto-3g'
-mol.basis = "6-31g*"
+mol.basis = 'sto-3g'
+#mol.basis = "6-31g*"
 mol.symmetry = "c2v"
 mol.build()
 
@@ -34,8 +34,30 @@ def pyscf_fci():
     mf = mol.RHF().run()
     return mf, pyscf.fci.FCI(mf).kernel()[0]
 
+hci_state, t_slq_hci = timed(
+    lambda: slq.selected_ci.solve(mol, hci_settings)
+)
 
-slq_hci_out, t_slq_hci = timed(lambda: slq.methods.selected_ci.solve(mol, hci_settings)[0])
+# Check whether the Fortran state was stored
+
+basis = hci_state.basis
+coeffs = hci_state.civec
+
+print("\n=== SELQIE STATE CHECK ===")
+print("Retrieved determinant basis from Fortran")
+
+if basis is not None:
+    print(f"  Basis shape     : {basis.shape}")
+    print(f"  Determinants    : {basis.shape[1]}")
+
+print("Retrieved CI coefficients from Fortran")
+
+if coeffs is not None:
+    print(f"  Number coeffs   : {len(coeffs)}")
+    print(f"  Norm            : {np.linalg.norm(coeffs):.12f}")
+
+print("==========================\n")
+
 
 (mf, fci_e), t_pyscf_fci = timed(pyscf_fci)
 
@@ -48,14 +70,14 @@ energystr = "energy:"
 timestr = "time:"
 detstr = "dets:"
 colon = ":"
-print(f"\nPYSCF FCI {detstr:<11} {raw_fci_dets}")
-print(f"SELQIE HCI {detstr:<10} {slq_hci_out[1]}")
+print(f"PYSCF FCI {detstr:<11} {raw_fci_dets}")
+print(f"SELQIE HCI {detstr:<10} {hci_state.n_basis}")
 
 print(f"SELQIE conv {energystr:<10} {hci_settings.conv:.1g} Ha")
 print(f"SELQIE HCI epsilon {colon:<3} {hci_settings.hci_epsilon} Ha\n")
 
 print(f"PySCF FCI {energystr:<10} {fci_e} Ha")
-print(f"SELQIE HCI {energystr:<9} {slq_hci_out[0]:.9f} Ha\n")
+print(f"SELQIE HCI {energystr:<9} {hci_state.energy:.9f} Ha\n")
 
 print(f"PySCF FCI {timestr:<11} {t_pyscf_fci:.3f} secs")
 print(f"SELQIE HCI {timestr:<10} {t_slq_hci:.3f} secs\n")

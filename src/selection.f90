@@ -14,13 +14,13 @@ contains
         real(kind = dp), intent(in) :: old_e, old_c(:), h(:,:), g(:,:,:,:), epsilon
 
         if (sel_method == "hci") then
-            call hci(selected_space, n_sel_space, n_words, old_e, old_c, n_spin_orbs, h, g, epsilon)
+            call hci(selected_space, n_sel_space, n_words, old_c, n_spin_orbs, h, g, epsilon)
         end if
 
     end subroutine add_selected_dets
 
 
-    subroutine hci(selected_space, n_sel_space, n_words, old_e, old_c, &
+    subroutine hci(selected_space, n_sel_space, n_words, old_c, &
                 n_spin_orbs, h, g, epsilon)
 
         integer(kind=8), allocatable, intent(inout) :: selected_space(:,:)
@@ -28,8 +28,7 @@ contains
 
         integer, intent(in) :: n_words
         integer, intent(in) :: n_spin_orbs
-
-        real(dp), intent(in) :: old_e
+        
         real(dp), intent(in) :: old_c(:)
         real(dp), intent(in) :: h(:,:)
         real(dp), intent(in) :: g(:,:,:,:)

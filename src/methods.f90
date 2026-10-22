@@ -8,7 +8,7 @@ module methods
 
 contains
 
-    subroutine sci(n_orb, n_up, n_down, n_words, n_spin_orbs, n_basis, h, g, sel_method, conv, epsilon, cmin, energy, success)
+    subroutine sci(n_orb, n_up, n_down, n_words, n_spin_orbs, n_basis, h, g, sel_method, conv, epsilon, cmin, energy, success, basis, c_out)
         integer, intent(in) :: n_orb, n_up, n_down, n_words, n_spin_orbs
         real(kind = dp), intent(in) :: h(:,:), conv, epsilon, cmin
         real(kind = dp), intent(in) :: g(:,:,:,:)
@@ -16,16 +16,17 @@ contains
         character(len=*), intent(in) :: sel_method
         integer, intent(out) :: n_basis
         logical, intent(out) :: success
+        real(kind = dp), allocatable, intent(out) :: c_out(:)
+        integer(kind = 8), allocatable, intent(out) :: basis(:,:)
 
         !local variables, allocatable
         integer(kind = 8), allocatable :: selected_space(:,:), ref_det(:)
-        real(kind = dp), allocatable :: sel_hamiltonian(:,:), sel_c(:), old_c(:), new_c(:)
+        real(kind = dp), allocatable :: sel_c(:), old_c(:), new_c(:)
         
         !local variables, non-allocatable
         logical :: converged
         integer :: iteration, n_sel_space
         real(kind = dp) :: sel_e, old_e, new_e
-        real :: t1, t2
 
         !get HF reference determinant
         n_basis = 0
@@ -99,6 +100,7 @@ contains
             !check convergence
             if (abs(old_e-new_e) < conv) then
                 converged = .true.
+                c_out = new_c
             end if
 
 
@@ -122,6 +124,7 @@ contains
         write(*, '(A,I0)') "----------------------------------------------------------"
         energy = new_e
         n_basis = n_sel_space
+        basis = selected_space
 
 
 

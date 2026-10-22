@@ -20,13 +20,10 @@ class settings:
     cmin: float = 1e-3
     hci_epsilon: float = None
 
-@dataclass
-class selection_params:
-    ACI_sigma: float = None
-
 #object for holding result data
 @dataclass
 class state:
+    energy: float
+    n_basis: int
     basis: np.array
     civec: np.array
-    energy: float

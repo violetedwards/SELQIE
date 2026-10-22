@@ -1,5 +1,14 @@
-from ._selqie import solve
+from ._selqie import selqie_api
 
-__all__ = ["solve"]
+solve = selqie_api.solve
 
-__version__ = "0.1.0"
+from . import config
+from . import utilities
+from . import selected_ci
+
+__all__ = [
+    "solve",
+    "config",
+    "utilities",
+    "selected_ci",
+]

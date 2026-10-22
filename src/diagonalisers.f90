@@ -261,8 +261,6 @@ contains
         real(dp) :: denom
         real(dp) :: rnorm
 
-        real :: t1, t2
-
         type(det_hash_t) :: hash_table
         type(connection_list_t), allocatable :: conn(:)
 
