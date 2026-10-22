@@ -12,6 +12,8 @@ module diagonalisers
 
 contains
     subroutine lowest_eigenvalue(h_matrix, n_basis, e_low, success, eigenvector)
+        !solve for lowest eigenvalue of explicity stored hamiltonian
+
         integer, intent(in) :: n_basis
         real(kind=dp), intent(inout) :: h_matrix(n_basis, n_basis)  ! destroyed by dsyevr
         real(kind=dp), intent(out) :: e_low
@@ -61,54 +63,13 @@ contains
         end if
     end subroutine lowest_eigenvalue
 
-
-    subroutine apply_hamiltonian_direct( &
-            x, y, &
-            basis, n_basis, n_words, n_spin_orbs, &
-            h, g)
-
-        implicit none
-
-        integer, intent(in) :: n_basis
-        integer, intent(in) :: n_words
-        integer, intent(in) :: n_spin_orbs
-
-        integer(kind=8), intent(in) :: basis(n_words,n_basis)
-
-        real(dp), intent(in) :: x(n_basis)
-        real(dp), intent(out) :: y(n_basis)
-
-        real(dp), intent(in) :: h(:,:)
-        real(dp), intent(in) :: g(:,:,:,:)
-
-        integer :: i,j
-        real(dp) :: hij
-
-        y = 0.0_dp
-
-        do i = 1,n_basis
-
-            do j = 1,n_basis
-
-                hij = get_matrix_element( &
-                    basis(:,i), n_words, &
-                    basis(:,j), n_words, &
-                    n_spin_orbs, h, g)
-
-                y(i) = y(i) + hij*x(j)
-
-            end do
-
-        end do
-
-    end subroutine apply_hamiltonian_direct
-
     subroutine build_connectivity( &
             conn, &
             basis, n_basis, n_words, n_spin_orbs, &
             h, g, &
             hash)
 
+        !builds connectivity graph of the hamiltonian, used in apply_hamitlonian
         implicit none
 
         type(connection_list_t), allocatable, intent(out) :: conn(:)
@@ -220,6 +181,7 @@ contains
             basis, n_basis, n_words, n_spin_orbs, &
             h, g, e_low, eigenvector)
 
+        !uses davidson method to get the lowest eigenvalue and eigenvector of the hamitlontain without explicitly storing it
         implicit none
 
         integer, intent(in) :: n_basis
@@ -404,7 +366,7 @@ contains
             deallocate(conn)
         end if
 
-call destroy_det_hash(hash_table)
+        call destroy_det_hash(hash_table)
 
     end subroutine davidson_lowest
 
@@ -412,6 +374,7 @@ call destroy_det_hash(hash_table)
         x, y, &
         n_basis, &
         conn, diagH)
+        !applies non-explitily stored hamitlonitan to a general vector, x. Used in davidson diagonalisation
 
         implicit none
 

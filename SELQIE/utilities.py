@@ -8,20 +8,6 @@ def find_exp(number) -> int:
 def space_to_spin_eints(eint1: np.array, eint2: np.array) -> tuple[np.array,np.array]:
     """
     Transform spatial 1 and 2 electron integrals so that they are in terms of spin orbitals.
-
-    Parameters
-    ----------
-    eint1:      np.array
-                Spacial one-electron integrals
-    eint2:      np.array
-                Spacial two-electron integrals
-
-    Returns
-    -------
-    h_int:      np.array
-                Spin-orbit one-electron integrals
-    g_int:      np.array
-                Spin-orbit two-electron integrals
     """
 
     #initialise variables

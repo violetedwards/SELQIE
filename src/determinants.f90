@@ -1,7 +1,5 @@
 
 module determinants
-
-
     use constants
 
     implicit none
@@ -57,6 +55,7 @@ subroutine determinant_bit_to_occ(bitstring, n_words, n_spin_orbs, occupations, 
 end subroutine determinant_bit_to_occ
 
 subroutine reference_determinant(n_orb, n_alpha, n_beta, bitstring, n_words)
+        !compute reference (H-F) determinant
         implicit none
 
         integer, intent(in) :: n_orb, n_alpha, n_beta, n_words
@@ -79,6 +78,7 @@ subroutine reference_determinant(n_orb, n_alpha, n_beta, bitstring, n_words)
 end subroutine reference_determinant
 
 logical function determinant_is_occupied(bitstring, n_words, orbital)
+        !checks if determinant is occupied
         implicit none
         integer, intent(in) :: n_words, orbital
         integer(kind=8), intent(in) :: bitstring(n_words)
@@ -93,7 +93,8 @@ logical function determinant_is_occupied(bitstring, n_words, orbital)
         end if
 end function determinant_is_occupied
 
-subroutine append_connected_det(candidate, connected_dets, n_connected, capacity, n_words)
+subroutine append_connected_det(candidate, connected_dets, n_connected, capacity, n_words)  
+        !add a candidate determinant to list of determinants
         implicit none
         integer, intent(in) :: n_words
         integer(kind=8), intent(in) :: candidate(n_words)
@@ -119,7 +120,7 @@ end subroutine append_connected_det
 
 subroutine get_connected_dets(ref_det, n_words, n_spin_orbs, order, &
                               connected_dets, n_connected)
-
+        !get all determinants connected to the reference determinant
         implicit none
 
         integer, intent(in) :: n_words
@@ -206,7 +207,7 @@ subroutine get_connected_dets(ref_det, n_words, n_spin_orbs, order, &
         capacity = max_conn
 
 
-
+        !single excitation
         if (order == 1) then
 
             do a = 1, n_occ
@@ -236,7 +237,7 @@ subroutine get_connected_dets(ref_det, n_words, n_spin_orbs, order, &
         end if
 
 
-
+        !double excitation
         if (order == 2) then
             do a = 1, n_occ - 1
                 do i = a + 1, n_occ
@@ -279,6 +280,7 @@ subroutine get_connected_dets(ref_det, n_words, n_spin_orbs, order, &
 end subroutine get_connected_dets
 
 subroutine append_unique_dets(dets, n_dets, candidates, n_candidates, n_words)
+        !add candidate determinant list to determinant list, only adding unique dets
         implicit none
 
         integer(kind = 8), allocatable, intent(inout) :: dets(:,:)
