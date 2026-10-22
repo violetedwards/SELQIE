@@ -3,14 +3,18 @@ SELected Quantum Interacting Electrons
 
 A modular python package for ab initio selected quantum chemistry methods.
 
+Install via
+``pip install git+https://github.com/violetedwards/SELQIE`` 
+
+See testing.py for example of using it, proper documentation is to come
+
 WORK IN PROGRESS
 Current code features:
+- it works
 - HCI
 
 Next planned functionality (in order):
-- Selected CI methods implemented naively in python. (ACI, ASCI, HCI, etc)
-- Optimisation of python code
-- Moving expensive functions into python-wrapped FORTRAN
+- Other Selected CI methods implemented. (ACI, ASCI, etc)
 - Ability to run FORTRAN code in parallel.
 
 Future ideas (not in order):
