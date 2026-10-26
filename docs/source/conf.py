@@ -1,6 +1,6 @@
 import os
 import sys
-#sys.path.insert(0, os.path.abspath('../..'))
+sys.path.insert(0, os.path.abspath('../..'))
 
 # Configuration file for the Sphinx documentation builder.
 #
@@ -18,7 +18,7 @@ author = 'Violet Edwards'
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = ["sphinx.ext.autodoc"]
-
+autodoc_mock_imports = ["SELQIE._selqie"]
 templates_path = ['_templates']
 exclude_patterns = []
 
