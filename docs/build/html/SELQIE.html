@@ -46,10 +46,22 @@
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">SELQIE</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">SELQIE package</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#selqie-config-module">SELQIE.config module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#selqie-selected-ci-module">SELQIE.selected_ci module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#selqie-utilities-module">SELQIE.utilities module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-contents">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-SELQIE.config">SELQIE.config module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SELQIE.config.hello"><code class="docutils literal notranslate"><span class="pre">hello()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#SELQIE.config.settings"><code class="docutils literal notranslate"><span class="pre">settings</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#SELQIE.config.state"><code class="docutils literal notranslate"><span class="pre">state</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-SELQIE.selected_ci">SELQIE.selected_ci module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SELQIE.selected_ci.solve"><code class="docutils literal notranslate"><span class="pre">solve()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-SELQIE.utilities">SELQIE.utilities module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SELQIE.utilities.find_exp"><code class="docutils literal notranslate"><span class="pre">find_exp()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#SELQIE.utilities.space_to_spin_eints"><code class="docutils literal notranslate"><span class="pre">space_to_spin_eints()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-SELQIE">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -86,17 +98,111 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 </section>
-<section id="selqie-config-module">
-<h2>SELQIE.config module<a class="headerlink" href="#selqie-config-module" title="Link to this heading"></a></h2>
+<section id="module-SELQIE.config">
+<span id="selqie-config-module"></span><h2>SELQIE.config module<a class="headerlink" href="#module-SELQIE.config" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="SELQIE.config.hello">
+<span class="sig-prename descclassname"><span class="pre">SELQIE.config.</span></span><span class="sig-name descname"><span class="pre">hello</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#SELQIE.config.hello" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="SELQIE.config.settings">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SELQIE.config.</span></span><span class="sig-name descname"><span class="pre">settings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_up</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_down</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sel_method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'str'</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conv</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-08</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hci_epsilon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SELQIE.config.settings" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SELQIE.config.settings.cmin">
+<span class="sig-name descname"><span class="pre">cmin</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.001</span></em><a class="headerlink" href="#SELQIE.config.settings.cmin" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SELQIE.config.settings.conv">
+<span class="sig-name descname"><span class="pre">conv</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1e-08</span></em><a class="headerlink" href="#SELQIE.config.settings.conv" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SELQIE.config.settings.hci_epsilon">
+<span class="sig-name descname"><span class="pre">hci_epsilon</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#SELQIE.config.settings.hci_epsilon" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SELQIE.config.settings.method">
+<span class="sig-name descname"><span class="pre">method</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#SELQIE.config.settings.method" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SELQIE.config.settings.n_down">
+<span class="sig-name descname"><span class="pre">n_down</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#SELQIE.config.settings.n_down" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SELQIE.config.settings.n_up">
+<span class="sig-name descname"><span class="pre">n_up</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#SELQIE.config.settings.n_up" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SELQIE.config.settings.sel_method">
+<span class="sig-name descname"><span class="pre">sel_method</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#SELQIE.config.settings.sel_method" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SELQIE.config.settings.test">
+<span class="sig-name descname"><span class="pre">test</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#SELQIE.config.settings.test" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="SELQIE.config.state">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SELQIE.config.</span></span><span class="sig-name descname"><span class="pre">state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy:</span> <span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_basis:</span> <span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basis:</span> <span class="pre">&lt;built-in</span> <span class="pre">function</span> <span class="pre">array&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">civec:</span> <span class="pre">&lt;built-in</span> <span class="pre">function</span> <span class="pre">array&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SELQIE.config.state" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SELQIE.config.state.basis">
+<span class="sig-name descname"><span class="pre">basis</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">array</span></em><a class="headerlink" href="#SELQIE.config.state.basis" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SELQIE.config.state.civec">
+<span class="sig-name descname"><span class="pre">civec</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">array</span></em><a class="headerlink" href="#SELQIE.config.state.civec" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SELQIE.config.state.energy">
+<span class="sig-name descname"><span class="pre">energy</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#SELQIE.config.state.energy" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SELQIE.config.state.n_basis">
+<span class="sig-name descname"><span class="pre">n_basis</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#SELQIE.config.state.n_basis" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="selqie-selected-ci-module">
-<h2>SELQIE.selected_ci module<a class="headerlink" href="#selqie-selected-ci-module" title="Link to this heading"></a></h2>
+<section id="module-SELQIE.selected_ci">
+<span id="selqie-selected-ci-module"></span><h2>SELQIE.selected_ci module<a class="headerlink" href="#module-SELQIE.selected_ci" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="SELQIE.selected_ci.solve">
+<span class="sig-prename descclassname"><span class="pre">SELQIE.selected_ci.</span></span><span class="sig-name descname"><span class="pre">solve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Mole</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">settings</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#SELQIE.config.settings" title="SELQIE.config.settings"><span class="pre">settings</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#SELQIE.config.state" title="SELQIE.config.state"><span class="pre">state</span></a></span></span><a class="headerlink" href="#SELQIE.selected_ci.solve" title="Link to this definition"></a></dt>
+<dd><p>Solve using Selected CI.</p>
+</dd></dl>
+
 </section>
-<section id="selqie-utilities-module">
-<h2>SELQIE.utilities module<a class="headerlink" href="#selqie-utilities-module" title="Link to this heading"></a></h2>
+<section id="module-SELQIE.utilities">
+<span id="selqie-utilities-module"></span><h2>SELQIE.utilities module<a class="headerlink" href="#module-SELQIE.utilities" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="SELQIE.utilities.find_exp">
+<span class="sig-prename descclassname"><span class="pre">SELQIE.utilities.</span></span><span class="sig-name descname"><span class="pre">find_exp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#SELQIE.utilities.find_exp" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SELQIE.utilities.space_to_spin_eints">
+<span class="sig-prename descclassname"><span class="pre">SELQIE.utilities.</span></span><span class="sig-name descname"><span class="pre">space_to_spin_eints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eint1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eint2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">array</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">array</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#SELQIE.utilities.space_to_spin_eints" title="Link to this definition"></a></dt>
+<dd><p>Transform spatial 1 and 2 electron integrals so that they are in terms of spin orbitals.</p>
+</dd></dl>
+
 </section>
-<section id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<section id="module-SELQIE">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-SELQIE" title="Link to this heading"></a></h2>
 </section>
 </section>
 
