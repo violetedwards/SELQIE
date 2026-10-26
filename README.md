@@ -1,6 +1,8 @@
 # SELQIE
 SELected Quantum Interacting Electrons
 
+# WORK IN PROGRESS - CURRENTLY NOT WORKING
+
 A modular python package for ab initio selected quantum chemistry methods.
 
 Install via
@@ -8,7 +10,6 @@ Install via
 
 See testing.py for example of using it, proper documentation is to come
 
-WORK IN PROGRESS
 Current code features:
 - it works
 - HCI
