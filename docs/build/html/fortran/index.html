@@ -1,0 +1,308 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fortran Backend &mdash; SELQIE  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Diagonalisers" href="diagonalisers.html" />
+    <link rel="prev" title="HCI" href="../algorithms/hci.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            SELQIE
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Python Frontend</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms/index.html">Algorithms</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Fortran Backend</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="diagonalisers.html">Diagonalisers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="determinants.html">Determinants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hamiltonian.html">Hamiltonian</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hash.html">Hash</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.html">SELQIE API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="methods.html">Methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="selection.html">Selection</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SELQIE</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Fortran Backend</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/fortran/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="fortran-backend">
+<h1>Fortran Backend<a class="headerlink" href="#fortran-backend" title="Link to this heading"></a></h1>
+<p>The core SELQIE algorithms are implemented in Fortran.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="diagonalisers.html">Diagonalisers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="diagonalisers.html#lowest-eigenvalue">lowest_eigenvalue</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="diagonalisers.html#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="diagonalisers.html#returns">Returns</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="diagonalisers.html#build-connectivity">build_connectivity</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="diagonalisers.html#id1">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="diagonalisers.html#id2">Returns</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="diagonalisers.html#davidson-lowest">davidson_lowest</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="diagonalisers.html#id3">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="diagonalisers.html#id4">Returns</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="diagonalisers.html#apply-hamiltonian-sparse">apply_hamiltonian_sparse</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="diagonalisers.html#id5">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="diagonalisers.html#id6">Returns</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="determinants.html">Determinants</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="determinants.html#determinant-occ-to-bit">determinant_occ_to_bit</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="determinants.html#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="determinants.html#returns">Returns</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="determinants.html#determinant-bit-to-occ">determinant_bit_to_occ</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="determinants.html#id1">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="determinants.html#id2">Returns</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="determinants.html#reference-determinant">reference_determinant</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="determinants.html#id3">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="determinants.html#id4">Returns</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="determinants.html#determinant-is-occupied">determinant_is_occupied</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="determinants.html#id5">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="determinants.html#id6">Returns</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="determinants.html#append-connected-det">append_connected_det</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="determinants.html#id7">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="determinants.html#id8">Returns</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="determinants.html#get-connected-dets">get_connected_dets</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="determinants.html#id9">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="determinants.html#id10">Returns</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="determinants.html#append-unique-dets">append_unique_dets</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="determinants.html#id11">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="determinants.html#id12">Returns</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="hamiltonian.html">Hamiltonian</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="hamiltonian.html#get-occupied-orbitals">get_occupied_orbitals</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hamiltonian.html#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hamiltonian.html#returns">Returns</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hamiltonian.html#compare-dets">compare_dets</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hamiltonian.html#id1">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hamiltonian.html#id2">Returns</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hamiltonian.html#count-bits-before">count_bits_before</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hamiltonian.html#id3">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hamiltonian.html#id4">Returns</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hamiltonian.html#set-orbital">set_orbital</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hamiltonian.html#id5">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hamiltonian.html#id6">Returns</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hamiltonian.html#clear-orbital">clear_orbital</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hamiltonian.html#id7">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hamiltonian.html#id8">Returns</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hamiltonian.html#excitation-phase">excitation_phase</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hamiltonian.html#id9">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hamiltonian.html#id10">Returns</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hamiltonian.html#get-matrix-element">get_matrix_element</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hamiltonian.html#id11">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hamiltonian.html#id12">Returns</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hamiltonian.html#build-hamiltonian">build_hamiltonian</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hamiltonian.html#id13">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hamiltonian.html#id14">Returns</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="hash.html">Hash</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="hash.html#det-hash-t">det_hash_t</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hash.html#components">Components</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hash.html#hash-det">hash_det</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hash.html#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hash.html#returns">Returns</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hash.html#build-det-hash">build_det_hash</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hash.html#id1">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hash.html#id2">Returns</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hash.html#lookup-det-index">lookup_det_index</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hash.html#id3">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hash.html#id4">Returns</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hash.html#destroy-det-hash">destroy_det_hash</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hash.html#id5">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hash.html#id6">Returns</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="main.html">SELQIE API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="main.html#solve">solve</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="main.html#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="main.html#returns">Returns</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="main.html#internal-storage">Internal Storage</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="methods.html">Methods</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="methods.html#sci">sci</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="methods.html#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="methods.html#returns">Returns</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="methods.html#prune">prune</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="methods.html#id1">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="methods.html#id2">Returns</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="methods.html#cisd">cisd</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="methods.html#id3">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="methods.html#id4">Returns</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="methods.html#fci">fci</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="methods.html#id5">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="methods.html#id6">Returns</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="methods.html#combinations">combinations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="methods.html#id7">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="methods.html#id8">Returns</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="selection.html">Selection</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="selection.html#add-selected-dets">add_selected_dets</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="selection.html#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="selection.html#returns">Returns</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="selection.html#hci">hci</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="selection.html#id1">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="selection.html#id2">Returns</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../algorithms/hci.html" class="btn btn-neutral float-left" title="HCI" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="diagonalisers.html" class="btn btn-neutral float-right" title="Diagonalisers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Violet Edwards.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

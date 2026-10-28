@@ -1,0 +1,259 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Selection &mdash; SELQIE  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Methods" href="methods.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            SELQIE
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Python Frontend</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms/index.html">Algorithms</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Fortran Backend</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="diagonalisers.html">Diagonalisers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="determinants.html">Determinants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hamiltonian.html">Hamiltonian</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hash.html">Hash</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.html">SELQIE API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="methods.html">Methods</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Selection</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#add-selected-dets">add_selected_dets</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#returns">Returns</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#hci">hci</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2">Returns</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SELQIE</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Fortran Backend</a></li>
+      <li class="breadcrumb-item active">Selection</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/fortran/selection.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="selection">
+<h1>Selection<a class="headerlink" href="#selection" title="Link to this heading"></a></h1>
+<p>This module contains determinant selection algorithms used by selected CI
+methods.</p>
+<section id="add-selected-dets">
+<h2>add_selected_dets<a class="headerlink" href="#add-selected-dets" title="Link to this heading"></a></h2>
+<p><strong>Source:</strong> <a class="reference external" href="https://github.com/violetedwards/SELQIE/blob/selqie-main/src/selection.f90#L9-L19">selection.f90:L9-L19</a></p>
+<p><code class="docutils literal notranslate"><span class="pre">add_selected_dets(sel_method,</span> <span class="pre">selected_space,</span> <span class="pre">n_sel_space,</span> <span class="pre">n_words,</span> <span class="pre">old_e,</span> <span class="pre">old_c,</span> <span class="pre">n_spin_orbs,</span> <span class="pre">h,</span> <span class="pre">g,</span> <span class="pre">epsilon)</span></code></p>
+<p>Dispatch routine for determinant selection methods.</p>
+<p>Based on the selected method, the appropriate selection algorithm is applied
+to expand the current determinant space.</p>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">sel_method</span></code> : character(len=*)</p>
+<blockquote>
+<div><p>Selection method to apply.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">selected_space</span></code> : integer(kind=8), allocatable, dimension(:,:)</p>
+<blockquote>
+<div><p>Current selected determinant space.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">n_sel_space</span></code> : integer</p>
+<blockquote>
+<div><p>Number of determinants currently in the selected space.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">n_words</span></code> : integer</p>
+<blockquote>
+<div><p>Number of words used to store each determinant.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">old_e</span></code> : real(kind=dp)</p>
+<blockquote>
+<div><p>Current variational energy.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">old_c</span></code> : real(kind=dp), dimension(:)</p>
+<blockquote>
+<div><p>Current CI coefficients.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">n_spin_orbs</span></code> : integer</p>
+<blockquote>
+<div><p>Number of spin orbitals.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">h</span></code> : real(kind=dp), dimension(:,:)</p>
+<blockquote>
+<div><p>One-electron integrals.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">g</span></code> : real(kind=dp), dimension(:,:,:,:)</p>
+<blockquote>
+<div><p>Two-electron integrals.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">epsilon</span></code> : real(kind=dp)</p>
+<blockquote>
+<div><p>Selection threshold.</p>
+</div></blockquote>
+</section>
+<section id="returns">
+<h3>Returns<a class="headerlink" href="#returns" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">selected_space</span></code> : integer(kind=8), allocatable, dimension(:,:)</p>
+<blockquote>
+<div><p>Expanded determinant space.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">n_sel_space</span></code> : integer</p>
+<blockquote>
+<div><p>Updated size of the selected space.</p>
+</div></blockquote>
+</section>
+</section>
+<section id="hci">
+<h2>hci<a class="headerlink" href="#hci" title="Link to this heading"></a></h2>
+<p><strong>Source:</strong> <a class="reference external" href="https://github.com/violetedwards/SELQIE/blob/selqie-main/src/selection.f90#L22-L119">selection.f90:L22-L119</a></p>
+<p><code class="docutils literal notranslate"><span class="pre">hci(selected_space,</span> <span class="pre">n_sel_space,</span> <span class="pre">n_words,</span> <span class="pre">old_c,</span> <span class="pre">n_spin_orbs,</span> <span class="pre">h,</span> <span class="pre">g,</span> <span class="pre">epsilon)</span></code></p>
+<p>Performs determinant selection using the Heat-Bath Configuration Interaction
+(HCI) algorithm.</p>
+<p>For each determinant in the current selected space, all connected single and
+double excitations are generated. Candidate determinants are retained if</p>
+<div class="math notranslate nohighlight">
+\[|H_{ij} c_i| &gt; \epsilon\]</div>
+<p>where <span class="math notranslate nohighlight">\(H_{ij}\)</span> is the Hamiltonian coupling between determinants and
+<span class="math notranslate nohighlight">\(c_i\)</span> is the CI coefficient of the parent determinant.</p>
+<p>New determinants passing this screening criterion are added to the selected
+space.</p>
+<section id="id1">
+<h3>Parameters<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">selected_space</span></code> : integer(kind=8), allocatable, dimension(:,:)</p>
+<blockquote>
+<div><p>Current selected determinant space.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">n_sel_space</span></code> : integer</p>
+<blockquote>
+<div><p>Number of determinants currently in the selected space.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">n_words</span></code> : integer</p>
+<blockquote>
+<div><p>Number of words used to store each determinant.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">old_c</span></code> : real(kind=dp), dimension(:)</p>
+<blockquote>
+<div><p>CI coefficients from the previous variational calculation.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">n_spin_orbs</span></code> : integer</p>
+<blockquote>
+<div><p>Number of spin orbitals.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">h</span></code> : real(kind=dp), dimension(:,:)</p>
+<blockquote>
+<div><p>One-electron integrals.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">g</span></code> : real(kind=dp), dimension(:,:,:,:)</p>
+<blockquote>
+<div><p>Two-electron integrals.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">epsilon</span></code> : real(kind=dp)</p>
+<blockquote>
+<div><p>HCI selection threshold.</p>
+</div></blockquote>
+</section>
+<section id="id2">
+<h3>Returns<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">selected_space</span></code> : integer(kind=8), allocatable, dimension(:,:)</p>
+<blockquote>
+<div><p>Expanded determinant space containing all selected determinants.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">n_sel_space</span></code> : integer</p>
+<blockquote>
+<div><p>Updated number of determinants in the selected space.</p>
+</div></blockquote>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="methods.html" class="btn btn-neutral float-left" title="Methods" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Violet Edwards.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

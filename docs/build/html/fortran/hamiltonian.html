@@ -1,0 +1,458 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hamiltonian &mdash; SELQIE  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Hash" href="hash.html" />
+    <link rel="prev" title="Determinants" href="determinants.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            SELQIE
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Python Frontend</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms/index.html">Algorithms</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Fortran Backend</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="diagonalisers.html">Diagonalisers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="determinants.html">Determinants</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Hamiltonian</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#get-occupied-orbitals">get_occupied_orbitals</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#returns">Returns</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#compare-dets">compare_dets</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2">Returns</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#count-bits-before">count_bits_before</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id3">Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id4">Returns</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#set-orbital">set_orbital</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id5">Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id6">Returns</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#clear-orbital">clear_orbital</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id7">Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id8">Returns</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#excitation-phase">excitation_phase</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id9">Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id10">Returns</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#get-matrix-element">get_matrix_element</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id11">Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id12">Returns</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#build-hamiltonian">build_hamiltonian</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id13">Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id14">Returns</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hash.html">Hash</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.html">SELQIE API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="methods.html">Methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="selection.html">Selection</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SELQIE</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Fortran Backend</a></li>
+      <li class="breadcrumb-item active">Hamiltonian</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/fortran/hamiltonian.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="hamiltonian">
+<h1>Hamiltonian<a class="headerlink" href="#hamiltonian" title="Link to this heading"></a></h1>
+<p>This module contains routines for analysing determinants and constructing
+Slater-Condon Hamiltonian matrix elements.</p>
+<section id="get-occupied-orbitals">
+<h2>get_occupied_orbitals<a class="headerlink" href="#get-occupied-orbitals" title="Link to this heading"></a></h2>
+<p><strong>Source:</strong> <a class="reference external" href="https://github.com/violetedwards/SELQIE/blob/selqie-main/src/hamiltonian.f90#L9-L23">hamiltonian.f90:L9-L23</a></p>
+<p><code class="docutils literal notranslate"><span class="pre">get_occupied_orbitals(det,</span> <span class="pre">n_words,</span> <span class="pre">n_spin_orbs,</span> <span class="pre">occ,</span> <span class="pre">n_occ)</span></code></p>
+<p>Extracts all occupied spin orbitals from a determinant bitstring.</p>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">det</span></code> : integer(kind=8), dimension(n_words)</p>
+<blockquote>
+<div><p>Determinant bitstring.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">n_words</span></code> : integer</p>
+<blockquote>
+<div><p>Number of words used to store the determinant.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">n_spin_orbs</span></code> : integer</p>
+<blockquote>
+<div><p>Number of spin orbitals in the basis set.</p>
+</div></blockquote>
+</section>
+<section id="returns">
+<h3>Returns<a class="headerlink" href="#returns" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">occ</span></code> : integer, dimension(n_spin_orbs)</p>
+<blockquote>
+<div><p>Array containing occupied orbital indices.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">n_occ</span></code> : integer</p>
+<blockquote>
+<div><p>Number of occupied orbitals found.</p>
+</div></blockquote>
+</section>
+</section>
+<section id="compare-dets">
+<h2>compare_dets<a class="headerlink" href="#compare-dets" title="Link to this heading"></a></h2>
+<p><strong>Source:</strong> <a class="reference external" href="https://github.com/violetedwards/SELQIE/blob/selqie-main/src/hamiltonian.f90#L25-L42">hamiltonian.f90:L25-L42</a></p>
+<p><code class="docutils literal notranslate"><span class="pre">compare_dets(det1,</span> <span class="pre">n_words1,</span> <span class="pre">det2,</span> <span class="pre">n_words2,</span> <span class="pre">n_spin_orbs,</span> <span class="pre">added,</span> <span class="pre">removed,</span> <span class="pre">n_added,</span> <span class="pre">n_removed)</span></code></p>
+<p>Compares two determinants and identifies which orbitals have been added and
+removed between them.</p>
+<section id="id1">
+<h3>Parameters<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">det1</span></code> : integer(kind=8), dimension(n_words1)</p>
+<blockquote>
+<div><p>First determinant.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">det2</span></code> : integer(kind=8), dimension(n_words2)</p>
+<blockquote>
+<div><p>Second determinant.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">n_words1</span></code> : integer</p>
+<blockquote>
+<div><p>Number of words used to store the first determinant.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">n_words2</span></code> : integer</p>
+<blockquote>
+<div><p>Number of words used to store the second determinant.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">n_spin_orbs</span></code> : integer</p>
+<blockquote>
+<div><p>Number of spin orbitals in the basis set.</p>
+</div></blockquote>
+</section>
+<section id="id2">
+<h3>Returns<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">added</span></code> : integer, dimension(n_spin_orbs)</p>
+<blockquote>
+<div><p>Orbitals occupied in <code class="docutils literal notranslate"><span class="pre">det2</span></code> but not <code class="docutils literal notranslate"><span class="pre">det1</span></code>.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">removed</span></code> : integer, dimension(n_spin_orbs)</p>
+<blockquote>
+<div><p>Orbitals occupied in <code class="docutils literal notranslate"><span class="pre">det1</span></code> but not <code class="docutils literal notranslate"><span class="pre">det2</span></code>.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">n_added</span></code> : integer</p>
+<blockquote>
+<div><p>Number of added orbitals.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">n_removed</span></code> : integer</p>
+<blockquote>
+<div><p>Number of removed orbitals.</p>
+</div></blockquote>
+</section>
+</section>
+<section id="count-bits-before">
+<h2>count_bits_before<a class="headerlink" href="#count-bits-before" title="Link to this heading"></a></h2>
+<p><strong>Source:</strong> <a class="reference external" href="https://github.com/violetedwards/SELQIE/blob/selqie-main/src/hamiltonian.f90#L44-L56">hamiltonian.f90:L44-L56</a></p>
+<p><code class="docutils literal notranslate"><span class="pre">count_bits_before(bitstring,</span> <span class="pre">n_words,</span> <span class="pre">orbital)</span></code></p>
+<p>Counts the number of occupied orbitals before a specified orbital index.</p>
+<section id="id3">
+<h3>Parameters<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">bitstring</span></code> : integer(kind=8), dimension(n_words)</p>
+<blockquote>
+<div><p>Determinant bitstring.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">n_words</span></code> : integer</p>
+<blockquote>
+<div><p>Number of words used to store the determinant.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">orbital</span></code> : integer</p>
+<blockquote>
+<div><p>Orbital index.</p>
+</div></blockquote>
+</section>
+<section id="id4">
+<h3>Returns<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">count_bits_before</span></code> : integer</p>
+<blockquote>
+<div><p>Number of occupied orbitals with indices lower than <code class="docutils literal notranslate"><span class="pre">orbital</span></code>.</p>
+</div></blockquote>
+</section>
+</section>
+<section id="set-orbital">
+<h2>set_orbital<a class="headerlink" href="#set-orbital" title="Link to this heading"></a></h2>
+<p><strong>Source:</strong> <a class="reference external" href="https://github.com/violetedwards/SELQIE/blob/selqie-main/src/hamiltonian.f90#L58-L71">hamiltonian.f90:L58-L71</a></p>
+<p><code class="docutils literal notranslate"><span class="pre">set_orbital(bitstring,</span> <span class="pre">n_words,</span> <span class="pre">orbital)</span></code></p>
+<p>Returns a determinant bitstring with the specified orbital occupied.</p>
+<section id="id5">
+<h3>Parameters<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">bitstring</span></code> : integer(kind=8), dimension(n_words)</p>
+<blockquote>
+<div><p>Determinant bitstring.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">n_words</span></code> : integer</p>
+<blockquote>
+<div><p>Number of words used to store the determinant.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">orbital</span></code> : integer</p>
+<blockquote>
+<div><p>Orbital to occupy.</p>
+</div></blockquote>
+</section>
+<section id="id6">
+<h3>Returns<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">new_bitstring</span></code> : integer(kind=8), dimension(n_words)</p>
+<blockquote>
+<div><p>Modified determinant bitstring.</p>
+</div></blockquote>
+</section>
+</section>
+<section id="clear-orbital">
+<h2>clear_orbital<a class="headerlink" href="#clear-orbital" title="Link to this heading"></a></h2>
+<p><strong>Source:</strong> <a class="reference external" href="https://github.com/violetedwards/SELQIE/blob/selqie-main/src/hamiltonian.f90#L73-L86">hamiltonian.f90:L73-L86</a></p>
+<p><code class="docutils literal notranslate"><span class="pre">clear_orbital(bitstring,</span> <span class="pre">n_words,</span> <span class="pre">orbital)</span></code></p>
+<p>Returns a determinant bitstring with the specified orbital unoccupied.</p>
+<section id="id7">
+<h3>Parameters<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">bitstring</span></code> : integer(kind=8), dimension(n_words)</p>
+<blockquote>
+<div><p>Determinant bitstring.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">n_words</span></code> : integer</p>
+<blockquote>
+<div><p>Number of words used to store the determinant.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">orbital</span></code> : integer</p>
+<blockquote>
+<div><p>Orbital to remove.</p>
+</div></blockquote>
+</section>
+<section id="id8">
+<h3>Returns<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">new_bitstring</span></code> : integer(kind=8), dimension(n_words)</p>
+<blockquote>
+<div><p>Modified determinant bitstring.</p>
+</div></blockquote>
+</section>
+</section>
+<section id="excitation-phase">
+<h2>excitation_phase<a class="headerlink" href="#excitation-phase" title="Link to this heading"></a></h2>
+<p><strong>Source:</strong> <a class="reference external" href="https://github.com/violetedwards/SELQIE/blob/selqie-main/src/hamiltonian.f90#L88-L111">hamiltonian.f90:L88-L111</a></p>
+<p><code class="docutils literal notranslate"><span class="pre">excitation_phase(det,</span> <span class="pre">n_words,</span> <span class="pre">added,</span> <span class="pre">n_added,</span> <span class="pre">removed,</span> <span class="pre">n_removed)</span></code></p>
+<p>Computes the fermionic phase factor associated with an excitation between two
+determinants.</p>
+<section id="id9">
+<h3>Parameters<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">det</span></code> : integer(kind=8), dimension(n_words)</p>
+<blockquote>
+<div><p>Reference determinant.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">n_words</span></code> : integer</p>
+<blockquote>
+<div><p>Number of words used to store the determinant.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">added</span></code> : integer, dimension(n_added)</p>
+<blockquote>
+<div><p>Orbitals added to the determinant.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">removed</span></code> : integer, dimension(n_removed)</p>
+<blockquote>
+<div><p>Orbitals removed from the determinant.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">n_added</span></code> : integer</p>
+<blockquote>
+<div><p>Number of added orbitals.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">n_removed</span></code> : integer</p>
+<blockquote>
+<div><p>Number of removed orbitals.</p>
+</div></blockquote>
+</section>
+<section id="id10">
+<h3>Returns<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">excitation_phase</span></code> : integer</p>
+<blockquote>
+<div><p>Fermionic phase factor, <code class="docutils literal notranslate"><span class="pre">+1</span></code> or <code class="docutils literal notranslate"><span class="pre">-1</span></code>.</p>
+</div></blockquote>
+</section>
+</section>
+<section id="get-matrix-element">
+<h2>get_matrix_element<a class="headerlink" href="#get-matrix-element" title="Link to this heading"></a></h2>
+<p><strong>Source:</strong> <a class="reference external" href="https://github.com/violetedwards/SELQIE/blob/selqie-main/src/hamiltonian.f90#L113-L181">hamiltonian.f90:L113-L181</a></p>
+<p><code class="docutils literal notranslate"><span class="pre">get_matrix_element(column_det,</span> <span class="pre">n_words_col,</span> <span class="pre">row_det,</span> <span class="pre">n_words_row,</span> <span class="pre">n_spin_orbs,</span> <span class="pre">h,</span> <span class="pre">g)</span></code></p>
+<p>Computes a Hamiltonian matrix element between two determinants using the
+Slater-Condon rules.</p>
+<section id="id11">
+<h3>Parameters<a class="headerlink" href="#id11" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">column_det</span></code> : integer(kind=8), dimension(n_words_col)</p>
+<blockquote>
+<div><p>Column determinant.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">row_det</span></code> : integer(kind=8), dimension(n_words_row)</p>
+<blockquote>
+<div><p>Row determinant.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">n_words_col</span></code> : integer</p>
+<blockquote>
+<div><p>Number of words used to store the column determinant.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">n_words_row</span></code> : integer</p>
+<blockquote>
+<div><p>Number of words used to store the row determinant.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">n_spin_orbs</span></code> : integer</p>
+<blockquote>
+<div><p>Number of spin orbitals in the basis set.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">h</span></code> : real(kind=dp), dimension(n_spin_orbs,n_spin_orbs)</p>
+<blockquote>
+<div><p>One-electron integrals.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">g</span></code> : real(kind=dp), dimension(n_spin_orbs,n_spin_orbs,n_spin_orbs,n_spin_orbs)</p>
+<blockquote>
+<div><p>Two-electron integrals.</p>
+</div></blockquote>
+</section>
+<section id="id12">
+<h3>Returns<a class="headerlink" href="#id12" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">get_matrix_element</span></code> : real(kind=dp)</p>
+<blockquote>
+<div><p>Hamiltonian matrix element between the two determinants.</p>
+</div></blockquote>
+</section>
+</section>
+<section id="build-hamiltonian">
+<h2>build_hamiltonian<a class="headerlink" href="#build-hamiltonian" title="Link to this heading"></a></h2>
+<p><strong>Source:</strong> <a class="reference external" href="https://github.com/violetedwards/SELQIE/blob/selqie-main/src/hamiltonian.f90#L183-L202">hamiltonian.f90:L183-L202</a></p>
+<p><code class="docutils literal notranslate"><span class="pre">build_hamiltonian(det_basis_set,</span> <span class="pre">n_det,</span> <span class="pre">n_words,</span> <span class="pre">n_spin_orbs,</span> <span class="pre">h,</span> <span class="pre">g,</span> <span class="pre">hamiltonian)</span></code></p>
+<p>Constructs the full Hamiltonian matrix for a determinant basis.</p>
+<section id="id13">
+<h3>Parameters<a class="headerlink" href="#id13" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">det_basis_set</span></code> : integer(kind=8), dimension(n_words,n_det)</p>
+<blockquote>
+<div><p>Determinant basis set.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">n_det</span></code> : integer</p>
+<blockquote>
+<div><p>Number of determinants in the basis.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">n_words</span></code> : integer</p>
+<blockquote>
+<div><p>Number of words used to store each determinant.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">n_spin_orbs</span></code> : integer</p>
+<blockquote>
+<div><p>Number of spin orbitals in the basis set.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">h</span></code> : real(kind=dp), dimension(n_spin_orbs,n_spin_orbs)</p>
+<blockquote>
+<div><p>One-electron integrals.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">g</span></code> : real(kind=dp), dimension(n_spin_orbs,n_spin_orbs,n_spin_orbs,n_spin_orbs)</p>
+<blockquote>
+<div><p>Two-electron integrals.</p>
+</div></blockquote>
+</section>
+<section id="id14">
+<h3>Returns<a class="headerlink" href="#id14" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">hamiltonian</span></code> : real(kind=dp), dimension(n_det,n_det)</p>
+<blockquote>
+<div><p>Hamiltonian matrix in the determinant basis.</p>
+</div></blockquote>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="determinants.html" class="btn btn-neutral float-left" title="Determinants" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="hash.html" class="btn btn-neutral float-right" title="Hash" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Violet Edwards.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

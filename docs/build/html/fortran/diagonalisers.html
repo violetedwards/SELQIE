@@ -1,0 +1,299 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Diagonalisers &mdash; SELQIE  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Determinants" href="determinants.html" />
+    <link rel="prev" title="Fortran Backend" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            SELQIE
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Python Frontend</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms/index.html">Algorithms</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Fortran Backend</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Diagonalisers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#lowest-eigenvalue">lowest_eigenvalue</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#returns">Returns</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#build-connectivity">build_connectivity</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2">Returns</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#davidson-lowest">davidson_lowest</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id3">Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id4">Returns</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#apply-hamiltonian-sparse">apply_hamiltonian_sparse</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id5">Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id6">Returns</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="determinants.html">Determinants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hamiltonian.html">Hamiltonian</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hash.html">Hash</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.html">SELQIE API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="methods.html">Methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="selection.html">Selection</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SELQIE</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Fortran Backend</a></li>
+      <li class="breadcrumb-item active">Diagonalisers</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/fortran/diagonalisers.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="diagonalisers">
+<h1>Diagonalisers<a class="headerlink" href="#diagonalisers" title="Link to this heading"></a></h1>
+<p>This module implements Davidson diagonalisation and
+subspace expansion for selected CI calculations.</p>
+<section id="lowest-eigenvalue">
+<h2>lowest_eigenvalue<a class="headerlink" href="#lowest-eigenvalue" title="Link to this heading"></a></h2>
+<p><strong>Source:</strong> <a class="reference external" href="https://github.com/violetedwards/SELQIE/blob/selqie-main/src/diagonalisers.f90#L14-L64">diagonalisers.f90:L14-L64</a></p>
+<p><code class="docutils literal notranslate"><span class="pre">lowest_eigenvalue(h_matrix,</span> <span class="pre">n_basis,</span> <span class="pre">e_low,</span> <span class="pre">success,</span> <span class="pre">eigenvector)</span></code></p>
+<p>Uses LAPACK to find the lowest eigenvalue of a Hamiltonian matrix.</p>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">h_matrix</span></code> : real(kind=dp), dimension(n_basis, n_basis)</p>
+<blockquote>
+<div><p>Hamiltonian matrix to be diagonalised.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">n_basis</span></code> : integer</p>
+<blockquote>
+<div><p>Number of determinants in the basis.</p>
+</div></blockquote>
+</section>
+<section id="returns">
+<h3>Returns<a class="headerlink" href="#returns" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">e_low</span></code> : real(kind=dp)</p>
+<blockquote>
+<div><p>Lowest eigenvalue of the Hamiltonian.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">success</span></code> : logical</p>
+<blockquote>
+<div><p>Indicates whether diagonalisation completed successfully.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">eigenvector</span></code> : real(kind=dp), dimension(n_basis)</p>
+<blockquote>
+<div><p>Eigenvector corresponding to <code class="docutils literal notranslate"><span class="pre">e_low</span></code>.</p>
+</div></blockquote>
+</section>
+</section>
+<section id="build-connectivity">
+<h2>build_connectivity<a class="headerlink" href="#build-connectivity" title="Link to this heading"></a></h2>
+<p><strong>Source:</strong> <a class="reference external" href="https://github.com/violetedwards/SELQIE/blob/selqie-main/src/diagonalisers.f90#L66-L177">diagonalisers.f90:L66-L177</a></p>
+<p><code class="docutils literal notranslate"><span class="pre">build_connectivity(conn,basis,</span> <span class="pre">n_basis,</span> <span class="pre">n_words,</span> <span class="pre">n_spin_orbs,</span> <span class="pre">h,</span> <span class="pre">g,</span> <span class="pre">hash)</span></code></p>
+<p>Builds the connectivity graphs of the hamitlonian, describing how elements interact. used in apply_hamiltonian</p>
+<section id="id1">
+<h3>Parameters<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">basis</span></code> : integer(kind=8), dimension(n_words,n_basis)</p>
+<blockquote>
+<div><p>The determinant basis set being used.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">n_basis</span></code> : integer</p>
+<blockquote>
+<div><p>Number of determinants in the basis.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">n_words</span></code> : integer</p>
+<blockquote>
+<div><p>Number of words needed to store each determinant bitstring</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">n_spin_orbs</span></code> : integer</p>
+<blockquote>
+<div><p>Number of spin orbitals in each determinant.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">h</span></code> : real(kind=dp), dimension(n_spin_orbs,n_spin_orbs)</p>
+<blockquote>
+<div><p>One-electron integrals in spin orbital basis</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">g</span></code> : real(kind=dp), dimension(n_spin_orbs,n_spin_orbs,n_spin_orbs,n_spin_orbs)</p>
+<blockquote>
+<div><p>Two-electron integrals in spin orbital basis</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">hash</span></code>: type(det_hash_t)</p>
+<blockquote>
+<div><p>Excitation lookup hash</p>
+</div></blockquote>
+</section>
+<section id="id2">
+<h3>Returns<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">conn</span></code> : type(connection_list_t), dimension(n_basis)</p>
+<blockquote>
+<div><p>Connectivity graph</p>
+</div></blockquote>
+</section>
+</section>
+<section id="davidson-lowest">
+<h2>davidson_lowest<a class="headerlink" href="#davidson-lowest" title="Link to this heading"></a></h2>
+<p><strong>Source:</strong> <a class="reference external" href="https://github.com/violetedwards/SELQIE/blob/selqie-main/src/diagonalisers.f90#L180-L371">diagonalisers.f90:L180-L371</a></p>
+<p><code class="docutils literal notranslate"><span class="pre">davidson_lowest(basis,</span> <span class="pre">n_basis,</span> <span class="pre">n_words,</span> <span class="pre">n_spin_orbs,</span> <span class="pre">h,</span> <span class="pre">g,</span> <span class="pre">e_low,</span> <span class="pre">eigenvector)</span></code></p>
+<p>Performs davidson diagonalisation and outputs the lowest eigenvalue and eigenvector.</p>
+<section id="id3">
+<h3>Parameters<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">basis</span></code> : integer(kind=8), dimension(n_words,n_basis)</p>
+<blockquote>
+<div><p>The determinant basis set being used.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">n_basis</span></code> : integer</p>
+<blockquote>
+<div><p>Number of determinants in the basis.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">n_words</span></code> : integer</p>
+<blockquote>
+<div><p>Number of words needed to store each determinant bitstring</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">n_spin_orbs</span></code> : integer</p>
+<blockquote>
+<div><p>Number of spin orbitals in each determinant.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">h</span></code> : real(kind=dp), dimension(n_spin_orbs,n_spin_orbs)</p>
+<blockquote>
+<div><p>One-electron integrals in spin orbital basis</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">g</span></code> : real(kind=dp), dimension(n_spin_orbs,n_spin_orbs,n_spin_orbs,n_spin_orbs)</p>
+<blockquote>
+<div><p>Two-electron integrals in spin orbital basis</p>
+</div></blockquote>
+</section>
+<section id="id4">
+<h3>Returns<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">e_low</span></code> : real(kind=dp)</p>
+<blockquote>
+<div><p>Lowest eigenvalue of the Hamiltonian.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">eigenvector</span></code> : real(kind=dp), dimension(n_basis)</p>
+<blockquote>
+<div><p>Eigenvector corresponding to <code class="docutils literal notranslate"><span class="pre">e_low</span></code>.</p>
+</div></blockquote>
+</section>
+</section>
+<section id="apply-hamiltonian-sparse">
+<h2>apply_hamiltonian_sparse<a class="headerlink" href="#apply-hamiltonian-sparse" title="Link to this heading"></a></h2>
+<p><strong>Source:</strong> <a class="reference external" href="https://github.com/violetedwards/SELQIE/blob/selqie-main/src/diagonalisers.f90#L373-L410">diagonalisers.f90:L373-L410</a></p>
+<p><code class="docutils literal notranslate"><span class="pre">apply_hamiltonian_sparse(x,</span> <span class="pre">y,</span> <span class="pre">n_basis,</span> <span class="pre">conn,</span> <span class="pre">diagH)</span></code></p>
+<p>applies non-explitily stored hamitlonitan to a general vector, x. Used in davidson diagonalisation.</p>
+<section id="id5">
+<h3>Parameters<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">x</span></code> : real(kind=dp), dimension(n_basis)</p>
+<blockquote>
+<div><p>general trial vector that the Hamiltonian is to be applied to</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">n_basis</span></code> : integer</p>
+<blockquote>
+<div><p>Number of determinants in the basis.</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">conn</span></code> : type(connection_list_t), dimension(n_basis)</p>
+<blockquote>
+<div><p>Connectivity graph</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">diagH</span></code> : real(kind=dp), dimension(n_basis)</p>
+<blockquote>
+<div><p>Diagonal part of hamitlonian</p>
+</div></blockquote>
+</section>
+<section id="id6">
+<h3>Returns<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">y</span></code> : real(kind=dp), dimension(n_basis)</p>
+<blockquote>
+<div><p>Hamiltonian applied to trial vector <code class="docutils literal notranslate"><span class="pre">x</span></code></p>
+</div></blockquote>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Fortran Backend" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="determinants.html" class="btn btn-neutral float-right" title="Determinants" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Violet Edwards.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

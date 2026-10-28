@@ -8,16 +8,21 @@ SELQIE documentation
 
 SELected Quantum Interacting Electrons
 
-Add your content using ``reStructuredText`` syntax. See the
-`reStructuredText <https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html>`_
-documentation for details.
+
+
+SELQIE Documentation
+====================
+
+SELected Quantum Interacting Electrons
 
 .. toctree::
-   :maxdepth: 4
-   :caption: Contents:
+   :maxdepth: 2
+   :caption: Contents
 
+   installation
+   tutorials
    modules
+   algorithms/index
+   fortran/index
 
 * :ref:`search`
-
-
