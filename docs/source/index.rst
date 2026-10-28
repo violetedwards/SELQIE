@@ -14,6 +14,8 @@ SELQIE Documentation
 ====================
 
 SELected Quantum Interacting Electrons
+GitHub Repo: https://github.com/violetedwards/SELQIE
+ReadTheDocs: https://selqie.readthedocs.io
 
 .. toctree::
    :maxdepth: 2

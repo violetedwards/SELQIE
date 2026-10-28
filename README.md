@@ -4,11 +4,20 @@ SELected Quantum Interacting Electrons
 # WORK IN PROGRESS - CURRENTLY NOT WORKING
 
 A modular python package for ab initio selected quantum chemistry methods.
+ReadTheDocs: https://selqie.readthedocs.io/
 
 Install via
 ``pip install git+https://github.com/violetedwards/SELQIE`` 
 
-See testing.py for example of using it, proper documentation is to come
+See tutorial.ipynb for basic functionality explaination. 
+See testing.py for a basic comparison to PySCF.
+
+Requires:
+Numpy
+PySCF
+Scipy
+LAPACK
+BLAS
 
 Current code features:
 - it works
