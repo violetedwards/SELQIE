@@ -51,16 +51,7 @@ contains
 
             allocate(sel_c(n_sel_space))
 
-
-            call davidson_lowest( &
-                selected_space, &
-                n_sel_space, &
-                n_words, &
-                n_spin_orbs, &
-                h, &
-                g, &
-                sel_e, &
-                sel_c)
+            call davidson_lowest(selected_space, n_sel_space, n_words, n_spin_orbs, h, g, sel_e, sel_c)
 
             success = .true.
 
@@ -73,22 +64,9 @@ contains
             !apply selection algorithm to add to selected space
 
             call add_selected_dets(sel_method, selected_space, n_sel_space, n_words, old_e, old_c, n_spin_orbs, h, g, epsilon)
-
             allocate(sel_c(n_sel_space))
 
-
-            call davidson_lowest( &
-                selected_space, &
-                n_sel_space, &
-                n_words, &
-                n_spin_orbs, &
-                h, &
-                g, &
-                sel_e, &
-                sel_c)
-
-
-
+            call davidson_lowest(selected_space, n_sel_space, n_words, n_spin_orbs, h, g, sel_e, sel_c)
             success = .true.
 
             !rename variables
@@ -103,20 +81,14 @@ contains
                 c_out = new_c
             end if
 
-
             !prune if not converged
             if (converged .eqv. .false.) then
-
                 call prune(selected_space, n_sel_space, n_words, new_c, cmin)
-
             end if
 
             !getting ready for next loop
             deallocate(old_c, new_c)
             iteration = iteration + 1
- 
-            
-
         end do
 
         !outputs
@@ -125,13 +97,7 @@ contains
         energy = new_e
         n_basis = n_sel_space
         basis = selected_space
-
-
-
     end subroutine
-
-
-
 
     subroutine prune(selected_space, n_sel_space, n_words, c, cmin)
         integer(kind = 8), allocatable, intent(inout) :: selected_space(:,:)
@@ -155,9 +121,6 @@ contains
         n_sel_space = n_kept
 
     end subroutine prune
-
-
-
 
     subroutine cisd(n_orb, n_up, n_down, n_words, n_spin_orbs, h_int, g_int, e_low, n_basis, success)
         integer, intent(in) :: n_orb, n_up, n_down, n_words, n_spin_orbs
@@ -190,15 +153,7 @@ contains
 
         allocate(eigvec(n_basis))
 
-        call davidson_lowest( &
-            det_basis, &
-            n_basis, &
-            n_words, &
-            n_spin_orbs, &
-            h_int, &
-            g_int, &
-            e_low, &
-            eigvec)
+        call davidson_lowest(det_basis, n_basis, n_words, n_spin_orbs, h_int, g_int, e_low, eigvec)
 
         success = .true.
     end subroutine cisd
@@ -240,16 +195,7 @@ contains
 
         allocate(eigvec(n_basis))
 
-        call davidson_lowest( &
-            det_basis, &
-            n_basis, &
-            n_words, &
-            n_spin_orbs, &
-            h_int, &
-            g_int, &
-            e_low, &
-            eigvec)
-
+        call davidson_lowest( det_basis, n_basis, n_words, n_spin_orbs, h_int, g_int, e_low, eigvec)
         success = .true.
     end subroutine fci
 

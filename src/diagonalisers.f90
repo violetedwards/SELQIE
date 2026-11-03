@@ -177,9 +177,7 @@ contains
     end subroutine build_connectivity
 
 
-    subroutine davidson_lowest( &
-            basis, n_basis, n_words, n_spin_orbs, &
-            h, g, e_low, eigenvector)
+    subroutine davidson_lowest(basis, n_basis, n_words, n_spin_orbs, h, g, e_low, eigenvector)
 
         !uses davidson method to get the lowest eigenvalue and eigenvector of the hamitlontain without explicitly storing it
         implicit none
@@ -237,23 +235,11 @@ contains
             eigenvector(1) = 1.0_dp
 
             return
-
         end if
 
+        call build_det_hash(hash_table, basis, n_words, n_basis)
 
-        call build_det_hash( &
-            hash_table, &
-            basis, &
-            n_words, &
-            n_basis)
-
-        call build_connectivity( &
-            conn, &
-            basis, n_basis, n_words, n_spin_orbs, &
-            h, g, &
-            hash_table)
-
-
+        call build_connectivity(conn, basis, n_basis, n_words, n_spin_orbs, h, g, hash_table)
         total_edges = 0
 
         do i=1,n_basis
@@ -286,24 +272,12 @@ contains
 
 
         m = 1
-        call apply_hamiltonian_sparse( &
-            V(:,m), W(:,m), &
-            n_basis, &
-            conn, diagH)
-
-
+        call apply_hamiltonian_sparse( V(:,m), W(:,m), n_basis, conn, diagH)
 
         do iter=1,max_iter
-            
-
             Hs(1:m,1:m) = matmul( transpose(V(:,1:m)), W(:,1:m) )
 
-            call lowest_eigenvalue( &
-                Hs(1:m,1:m), &
-                m, &
-                eval(1), &
-                success, &
-                eigenvector=coeff(1:m))
+            call lowest_eigenvalue(Hs(1:m,1:m), m, eval(1), success, eigenvector=coeff(1:m))
 
             q = matmul(V(:,1:m), coeff(1:m))
 
@@ -313,15 +287,11 @@ contains
             if(resid_norm < tol) exit
 
             do i=1,n_basis
-
                 denom = eval(1) - diagH(i)
-
                 if(abs(denom) < 1.0d-2) then
                     denom = sign(1.0d-2, denom)
                 endif
-
                 r(i) = r(i) / denom
-
             end do
 
             rnorm = sqrt(dot_product(r,r))
@@ -330,28 +300,20 @@ contains
                 r = r - dot_product(V(:,i),r)*V(:,i)
             end do
 
-
             r = r / sqrt(dot_product(r,r))
-
             m = m + 1
 
             if(m > max_sub) exit
 
             V(:,m) = r
 
-            call apply_hamiltonian_sparse( &
-                V(:,m), W(:,m), &
-                n_basis, &
-                conn, diagH)
-
-
+            call apply_hamiltonian_sparse(V(:,m), W(:,m), n_basis, conn, diagH)
         end do
 
         e_low = eval(1)
         eigenvector = q
 
         do i = 1, n_basis
-
             if (allocated(conn(i)%idx)) then
                 deallocate(conn(i)%idx)
             end if
@@ -359,7 +321,6 @@ contains
             if (allocated(conn(i)%hij)) then
                 deallocate(conn(i)%hij)
             end if
-
         end do
 
         if (allocated(conn)) then
@@ -367,22 +328,16 @@ contains
         end if
 
         call destroy_det_hash(hash_table)
-
     end subroutine davidson_lowest
 
-    subroutine apply_hamiltonian_sparse( &
-        x, y, &
-        n_basis, &
-        conn, diagH)
+    subroutine apply_hamiltonian_sparse(x, y, n_basis, conn, diagH)
         !applies non-explitily stored hamitlonitan to a general vector, x. Used in davidson diagonalisation
 
         implicit none
 
         integer, intent(in) :: n_basis
-
         real(dp), intent(in) :: x(n_basis)
         real(dp), intent(out) :: y(n_basis)
-
         real(dp), intent(in) :: diagH(n_basis)
 
         type(connection_list_t), intent(in) :: conn(n_basis)
@@ -394,21 +349,11 @@ contains
         y = 0.0_dp
 
         do i = 1, n_basis
-
             y(i) = y(i) + diagH(i) * x(i)
-
             do k = 1, size(conn(i)%idx)
-
                 idx = conn(i)%idx(k)
-
                 y(idx) = y(idx) + conn(i)%hij(k) * x(i)
-
             end do
-
         end do
-
     end subroutine apply_hamiltonian_sparse
-
-
-
 end module diagonalisers

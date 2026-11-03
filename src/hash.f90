@@ -58,18 +58,14 @@ contains
         hash_table%next = 0
 
         do i = 1,n_basis
-
             bucket = int(hash_det( &
                 basis(:,i), &
                 n_words, &
                 hash_table%table_size))
 
             hash_table%next(i) = hash_table%head(bucket)
-
             hash_table%head(bucket) = i
-
         end do
-
     end subroutine build_det_hash
 
 
@@ -79,11 +75,8 @@ contains
         implicit none
 
         integer, intent(in) :: n_words
-
         integer(kind=8), intent(in) :: det(n_words)
-
         integer(kind=8), intent(in) :: basis(:,:)
-
         type(det_hash_t), intent(in) :: hash_table
 
         integer :: bucket
@@ -97,34 +90,25 @@ contains
         idx = hash_table%head(bucket)
 
         do while(idx /= 0)
-
             if(all(det == basis(:,idx))) then
                 lookup_det_index = idx
                 return
             end if
-
             idx = hash_table%next(idx)
-
         end do
-
         lookup_det_index = 0
-
     end function lookup_det_index
 
 
 
     subroutine destroy_det_hash(hash_table)
-
         implicit none
-
         type(det_hash_t), intent(inout) :: hash_table
 
         if(allocated(hash_table%head)) deallocate(hash_table%head)
-
         if(allocated(hash_table%next)) deallocate(hash_table%next)
 
         hash_table%table_size = 0
 
     end subroutine destroy_det_hash
-
 end module hash

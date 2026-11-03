@@ -7,6 +7,9 @@ module selection
 contains
 
     subroutine add_selected_dets(sel_method, selected_space, n_sel_space, n_words, old_e, old_c, n_spin_orbs, h, g, epsilon)
+
+        !routes to correct selection algorithm
+
         character(len=*), intent(in) :: sel_method
         integer(kind = 8), allocatable, intent(inout) :: selected_space(:,:)
         integer, intent(inout) :: n_sel_space
@@ -20,8 +23,8 @@ contains
     end subroutine add_selected_dets
 
 
-    subroutine hci(selected_space, n_sel_space, n_words, old_c, &
-                n_spin_orbs, h, g, epsilon)
+    subroutine hci(selected_space, n_sel_space, n_words, old_c, n_spin_orbs, h, g, epsilon)
+        !Heat Bath Configuration Interaction (HCI)
 
         integer(kind=8), allocatable, intent(inout) :: selected_space(:,:)
         integer, intent(inout) :: n_sel_space
@@ -44,62 +47,30 @@ contains
 
         real(dp) :: hij
 
-        !--------------------------------------------------
         ! Start with current selected space
-        !--------------------------------------------------
 
         allocate(new_space(n_words,max(8,n_sel_space)))
 
         n_new = 0
 
-        call append_unique_dets( &
-            new_space, n_new, &
-            selected_space(:,1:n_sel_space), &
-            n_sel_space, n_words)
+        call append_unique_dets(new_space, n_new, selected_space(:,1:n_sel_space), n_sel_space, n_words)
 
-        !--------------------------------------------------
-        ! HCI screening during generation
-        !--------------------------------------------------
+        ! Generate connected determinants & accept those where |matrix element * c| > epsilon
 
         do i = 1, n_sel_space
-
             do order = 1,2
-
-                call get_connected_dets( &
-                    selected_space(:,i), &
-                    n_words, &
-                    n_spin_orbs, &
-                    order, &
-                    connected, &
-                    n_connected)
+                call get_connected_dets(selected_space(:,i), n_words, n_spin_orbs, order, connected, n_connected)
 
                 do j = 1, n_connected
-
-                    hij = get_matrix_element( &
-                        connected(:,j), &
-                        n_words, &
-                        selected_space(:,i), &
-                        n_words, &
-                        n_spin_orbs, &
-                        h, g)
+                    hij = get_matrix_element(connected(:,j), n_words, selected_space(:,i), n_words, n_spin_orbs, h, g)
 
                     if(abs(hij*old_c(i)) > epsilon) then
-
-                        call append_unique_dets( &
-                            new_space, &
-                            n_new, &
-                            connected(:,j:j), &
-                            1, &
-                            n_words)
-
+                        call append_unique_dets(new_space, n_new, connected(:,j:j), 1, n_words)
                     end if
-
                 end do
 
                 if(allocated(connected)) deallocate(connected)
-
             end do
-
         end do
 
         allocate(final_space(n_words,n_new))
