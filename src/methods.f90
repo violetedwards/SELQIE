@@ -8,9 +8,9 @@ module methods
 
 contains
 
-    subroutine sci(n_orb, n_up, n_down, n_words, n_spin_orbs, n_basis, h, g, sel_method, conv, epsilon, cmin, energy, success, basis, c_out)
+    subroutine sci(n_orb, n_up, n_down, n_words, n_spin_orbs, n_basis, h, g, sel_method, conv, epsilon, cmin, energy, success, basis, c_out, sigma)
         integer, intent(in) :: n_orb, n_up, n_down, n_words, n_spin_orbs
-        real(kind = dp), intent(in) :: h(:,:), conv, epsilon, cmin
+        real(kind = dp), intent(in) :: h(:,:), conv, epsilon, cmin, sigma
         real(kind = dp), intent(in) :: g(:,:,:,:)
         real(kind = dp), intent(out) :: energy
         character(len=*), intent(in) :: sel_method
@@ -63,7 +63,7 @@ contains
 
             !apply selection algorithm to add to selected space
 
-            call add_selected_dets(sel_method, selected_space, n_sel_space, n_words, old_e, old_c, n_spin_orbs, h, g, epsilon)
+            call add_selected_dets(sel_method, selected_space, n_sel_space, n_words, old_e, old_c, n_spin_orbs, h, g, epsilon, sigma)
             allocate(sel_c(n_sel_space))
 
             call davidson_lowest(selected_space, n_sel_space, n_words, n_spin_orbs, h, g, sel_e, sel_c)

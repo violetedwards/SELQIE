@@ -38,7 +38,7 @@ def solve(
     h_int, g_int = slq.utilities.space_to_spin_eints(eint1,eint2)
 
     #move to fortran for solving 
-    energy, n_basis = slq.solve(settings.method, settings.sel_method, n_orb, settings.n_up, settings.n_down, h_int, g_int, nuc_replusion, settings.conv, settings.hci_epsilon or 0.0, settings.cmin)
+    energy, n_basis = slq.solve(settings.method, settings.sel_method, n_orb, settings.n_up, settings.n_down, h_int, g_int, nuc_replusion, settings.conv, settings.hci_epsilon or 0.0, settings.cmin, settings.aci_sigma or 0.0)
     basis = slq._selqie.selqie_api.stored_basis
     coeffs = slq._selqie.selqie_api.stored_coeffs
     state_out = slq.config.state(energy=energy, n_basis=n_basis, basis=basis, civec=coeffs)

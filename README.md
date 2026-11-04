@@ -22,6 +22,7 @@ BLAS
 Current code features:
 - it works
 - HCI
+- ACI
 
 Next planned functionality (in order):
 - Other Selected CI methods implemented. (ACI, ASCI, etc)
