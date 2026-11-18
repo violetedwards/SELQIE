@@ -22,6 +22,7 @@ mol.build()
 n_alpha, n_beta = mol.nelec
 hci_settings = slq.config.settings(method="sci",sel_method="hci",n_up=n_alpha,n_down=n_beta,conv=1e-6,cmin=1e-6, hci_epsilon=0.001)
 aci_settings = slq.config.settings(method="sci",sel_method="aci",n_up=n_alpha,n_down=n_beta,conv=1e-6,cmin=1e-6, aci_sigma=0.000001)
+asci_settings = slq.config.settings(method="sci",sel_method="asci",n_up=n_alpha,n_down=n_beta,conv=1e-6,cmin=1e-6, asci_tdets=100)
 
 
 def timed(fn):
@@ -43,6 +44,10 @@ aci_state, t_slq_aci = timed(
     lambda: slq.selected_ci.solve(mol, aci_settings)
 )
 
+asci_state, t_slq_asci = timed(
+    lambda: slq.selected_ci.solve(mol, asci_settings)
+)
+
 
 (mf, fci_e), t_pyscf_fci = timed(pyscf_fci)
 
@@ -57,19 +62,23 @@ detstr = "dets:"
 colon = ":"
 print(f"PYSCF FCI {detstr:<11} {raw_fci_dets}")
 print(f"SELQIE HCI {detstr:<10} {hci_state.n_basis}")
-print(f"SELQIE ACI {detstr:<10} {aci_state.n_basis}\n")
+print(f"SELQIE ACI {detstr:<10} {aci_state.n_basis}")
+print(f"SELQIE ASCI {detstr:<9} {asci_state.n_basis}\n")
 
-print(f"SELQIE conv {energystr:<10} {hci_settings.conv:.1g} Ha")
-print(f"SELQIE HCI epsilon {colon:<3} {hci_settings.hci_epsilon} Ha")
-print(f"SELQIE ACI sigma {colon:<3} {aci_settings.aci_sigma} Ha\n")
+print(f"SELQIE conv {energystr:<9} {hci_settings.conv:.1g} Ha")
+print(f"SELQIE HCI epsilon {colon:<2} {hci_settings.hci_epsilon} Ha")
+print(f"SELQIE ACI sigma {colon:<4} {aci_settings.aci_sigma} Ha")
+print(f"SELQIE ASCI tdets {colon:<3} {asci_settings.asci_tdets} dets\n")
 
-print(f"PySCF FCI {energystr:<10} {fci_e} Ha")
-print(f"SELQIE HCI {energystr:<9} {hci_state.energy:.9f} Ha")
-print(f"SELQIE ACI {energystr:<9} {aci_state.energy:.9f} Ha\n")
+print(f"PySCF FCI {energystr:<10} {fci_e:.12f} Ha")
+print(f"SELQIE HCI {energystr:<9} {hci_state.energy:.12f} Ha")
+print(f"SELQIE ACI {energystr:<9} {aci_state.energy:.12f} Ha")
+print(f"SELQIE ASCI {energystr:<8} {asci_state.energy:.12f} Ha\n")
 
 print(f"PySCF FCI {timestr:<11} {t_pyscf_fci:.3f} secs")
 print(f"SELQIE HCI {timestr:<10} {t_slq_hci:.3f} secs")
-print(f"SELQIE ACI {timestr:<10} {t_slq_aci:.3f} secs\n")
+print(f"SELQIE ACI {timestr:<10} {t_slq_aci:.3f} secs")
+print(f"SELQIE ASCI {timestr:<9} {t_slq_asci:.3f} secs\n")
 
 
 
