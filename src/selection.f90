@@ -2,6 +2,7 @@ module selection
     use constants
     use hamiltonian
     use determinants
+    use selection_utils
     implicit none
 
 contains
@@ -21,6 +22,8 @@ contains
             call aci(selected_space, n_sel_space, n_words, old_c, old_e, n_spin_orbs, h, g, sigma)
         else if (sel_method == "asci") then
             call asci(selected_space, n_sel_space, n_words, old_c, old_e, n_spin_orbs, h, g, cdets, tdets)
+        else if (sel_method == "cipsi") then
+            call cipsi(selected_space, n_sel_space, n_words, old_c, old_e, n_spin_orbs, h, g, epsilon)
         end if
 
     end subroutine add_selected_dets
@@ -103,14 +106,11 @@ contains
         integer(kind=8), allocatable :: final_space(:,:)
         integer(kind=8), allocatable :: additional_space(:,:)
 
-        integer :: i,j,order,max_index
+        integer :: i,j,order
         integer :: n_connected, n_interacting, n_final, n_additional
 
-        integer(kind=8) :: temp_det(n_words)
-        real(dp) :: old_e, hij, ei, ep, v, delta, sum_energy_importance, temp_importance
+        real(dp) :: old_e, hij, ei, ep, v, delta, sum_energy_importance
         real(dp), allocatable :: energy_importance(:)
-        real(dp), allocatable :: sorted_energy_importance(:)
-        integer(kind=8), allocatable :: sorted_interacting_space(:,:)
 
         !start with current selected space
 
@@ -153,32 +153,14 @@ contains
             energy_importance(i) = abs(delta/2 - sqrt((delta*delta/4)+(v*v)))
         end do
 
-        !sort according to energy important sort
-        allocate(sorted_energy_importance(n_interacting))
-        allocate(sorted_interacting_space(n_words,n_interacting))
-        sorted_energy_importance = energy_importance
-        sorted_interacting_space = interacting_space(:,1:n_interacting)
-        do i = 1, n_interacting - 1
-            max_index = i
-            do j = i + 1, n_interacting
-                if (sorted_energy_importance(j) > sorted_energy_importance(max_index)) max_index = j
-            end do
-            if (max_index /= i) then
-                temp_importance = sorted_energy_importance(i)
-                sorted_energy_importance(i) = sorted_energy_importance(max_index)
-                sorted_energy_importance(max_index) = temp_importance
-                temp_det = sorted_interacting_space(:,i)
-                sorted_interacting_space(:,i) = sorted_interacting_space(:,max_index)
-                sorted_interacting_space(:,max_index) = temp_det
-            end if
-        end do
+        call sort_dets_by_score(interacting_space(:,1:n_interacting), energy_importance, n_interacting, n_words, .false.)
 
         !add sorted interacting space elements until remaining energy importance is <= sigma
-        sum_energy_importance = sum(sorted_energy_importance)
+        sum_energy_importance = sum(energy_importance)
         do i = 1, n_interacting
             if (sum_energy_importance <= sigma) exit
-            call append_unique_dets(additional_space, n_additional, sorted_interacting_space(:,i:i), 1, n_words)
-            sum_energy_importance = max(0.0_dp, sum_energy_importance - sorted_energy_importance(i))
+            call append_unique_dets(additional_space, n_additional, interacting_space(:,i:i), 1, n_words)
+            sum_energy_importance = max(0.0_dp, sum_energy_importance - energy_importance(i))
         end do
 
 
@@ -190,6 +172,67 @@ contains
         n_sel_space = n_final
 
         end subroutine
+
+    subroutine cipsi(selected_space, n_sel_space, n_words, old_c, old_e, n_spin_orbs, h, g, coefficient_threshold)
+        !Configuration Interaction using a Perturbative Selection made Iteratively
+        integer(kind=8), allocatable, intent(inout) :: selected_space(:,:)
+        integer, intent(inout) :: n_sel_space
+        integer, intent(in) :: n_words, n_spin_orbs
+        real(dp), intent(in) :: old_c(:), old_e, h(:,:), g(:,:,:,:), coefficient_threshold
+
+        integer(kind=8), allocatable :: connected(:,:), external_space(:,:), final_space(:,:)
+        integer :: i, j, order, n_connected, n_external, n_final
+        real(dp) :: coupling, denominator, first_order_coefficient, diagonal
+
+        allocate(external_space(n_words, max(8, n_sel_space)))
+        n_external = 0
+
+        !Build the unique space of external determinants connected to the variational space.
+        do i = 1, n_sel_space
+            do order = 1, 2
+                call get_connected_dets(selected_space(:,i), n_words, n_spin_orbs, order, connected, n_connected)
+                if (n_connected > 0) then
+                    call append_unique_dets(external_space, n_external, connected(:,1:n_connected), n_connected, n_words)
+                end if
+                if (allocated(connected)) deallocate(connected)
+            end do
+        end do
+
+        !Only external determinants contribute to the first-order wavefunction correction.
+        call remove_selected_dets(external_space, n_external, selected_space(:,1:n_sel_space), n_sel_space, n_words)
+
+        allocate(final_space(n_words, n_sel_space + n_external))
+        n_final = 0
+        call append_unique_dets(final_space, n_final, selected_space(:,1:n_sel_space), n_sel_space, n_words)
+
+        do i = 1, n_external
+            coupling = 0.0_dp
+            do j = 1, n_sel_space
+                coupling = coupling + get_matrix_element(external_space(:,i), n_words, selected_space(:,j), &
+                    n_words, n_spin_orbs, h, g) * old_c(j)
+            end do
+
+            diagonal = get_matrix_element(external_space(:,i), n_words, external_space(:,i), &
+                n_words, n_spin_orbs, h, g)
+            denominator = old_e - diagonal
+            if (abs(denominator) <= 1.0e-12_dp) then
+                if (abs(coupling) > tiny(1.0_dp)) then
+                    first_order_coefficient = huge(1.0_dp)
+                else
+                    first_order_coefficient = 0.0_dp
+                end if
+            else
+                first_order_coefficient = coupling / denominator
+            end if
+
+            if (abs(first_order_coefficient) > coefficient_threshold) then
+                call append_unique_dets(final_space, n_final, external_space(:,i:i), 1, n_words)
+            end if
+        end do
+
+        call move_alloc(final_space, selected_space)
+        n_sel_space = n_final
+    end subroutine cipsi
 
     subroutine asci(selected_space, n_sel_space, n_words, old_c, old_e, n_spin_orbs, h, g, cdets, tdets)
         !Adaptive Sampling Configuration Interaction
@@ -214,8 +257,7 @@ contains
         integer :: n_connected, n_interacting, n_candidates, n_core, target_dets
         integer, allocatable :: core_indices(:)
 
-        integer(kind=8) :: temp_det(n_words)
-        real(dp) :: sum_h_c, temp_coeff, denominator
+        real(dp) :: sum_h_c, denominator
         real(dp), allocatable :: pert_amp(:), candidate_coeffs(:), core_coeffs(:)
 
         !select the cdet determinants with largest coefficients to form the core
@@ -260,17 +302,7 @@ contains
         end do
 
         !core determinants already have their current CI coefficients in the target candidates
-        i = 1
-        do while (i <= n_interacting)
-            if (any_selected_det(interacting_space(:,i), core_space(:,1:n_core), n_core, n_words)) then
-                do j = i, n_interacting - 1
-                    interacting_space(:,j) = interacting_space(:,j+1)
-                end do
-                n_interacting = n_interacting - 1
-            else
-                i = i + 1
-            end if
-        end do
+        call remove_selected_dets(interacting_space, n_interacting, core_space(:,1:n_core), n_core, n_words)
 
         !get perturbed amplitudes, using only core determinants in the sum
         allocate(pert_amp(n_interacting))
@@ -299,23 +331,7 @@ contains
             candidate_coeffs(n_core+1:n_candidates) = pert_amp(1:n_interacting)
         end if
 
-        !sort amplitude list, and then sort det list by amp sorting
-        do i = 1, n_candidates - 1
-            max_index = i
-            do j = i + 1, n_candidates
-                if (abs(candidate_coeffs(j)) > abs(candidate_coeffs(max_index))) max_index = j
-            end do
-
-            if (max_index /= i) then
-                temp_coeff = candidate_coeffs(i)
-                candidate_coeffs(i) = candidate_coeffs(max_index)
-                candidate_coeffs(max_index) = temp_coeff
-
-                temp_det = candidate_space(:,i)
-                candidate_space(:,i) = candidate_space(:,max_index)
-                candidate_space(:,max_index) = temp_det
-            end if
-        end do
+        call sort_dets_by_score(candidate_space, candidate_coeffs, n_candidates, n_words, .true.)
 
         !select largest tdets determinants
         if (tdets <= 0) then
@@ -331,20 +347,5 @@ contains
         n_sel_space = target_dets
 
         end subroutine
-
-        logical function any_selected_det(det, dets, n_dets, n_words)
-            integer(kind=8), intent(in) :: det(n_words), dets(n_words,n_dets)
-            integer, intent(in) :: n_dets, n_words
-            integer :: i
-
-            any_selected_det = .false.
-            do i = 1, n_dets
-                if (all(det == dets(:,i))) then
-                    any_selected_det = .true.
-                    return
-                end if
-            end do
-        end function any_selected_det
-
 
 end module selection

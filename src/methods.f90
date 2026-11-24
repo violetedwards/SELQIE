@@ -96,7 +96,7 @@ contains
         write(*, '(A,I0)') "----------------------------------------------------------"
         energy = new_e
         n_basis = n_sel_space
-        basis = selected_space
+        basis = selected_space(:,1:n_sel_space)
     end subroutine
 
     subroutine prune(selected_space, n_sel_space, n_words, c, cmin)
@@ -184,11 +184,13 @@ contains
                 idet = idet + 1
                 do k = 1, n_up
                     orb = alpha(k, ia)
-                    det_basis((orb-1)/64 + 1, idet) = ibset(det_basis((orb-1)/64 + 1, idet), mod(orb-1, 64))
+                    det_basis((orb-1)/bits_per_word + 1, idet) = &
+                        ibset(det_basis((orb-1)/bits_per_word + 1, idet), mod(orb-1, bits_per_word))
                 end do
                 do k = 1, n_down
                     orb = n_orb + beta(k, ib)
-                    det_basis((orb-1)/64 + 1, idet) = ibset(det_basis((orb-1)/64 + 1, idet), mod(orb-1, 64))
+                    det_basis((orb-1)/bits_per_word + 1, idet) = &
+                        ibset(det_basis((orb-1)/bits_per_word + 1, idet), mod(orb-1, bits_per_word))
                 end do
             end do
         end do

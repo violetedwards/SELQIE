@@ -22,6 +22,7 @@ class settings:
     aci_sigma: float = None
     asci_cdets: int = None
     asci_tdets: int = None
+    cipsi_coeff_threshold: float = None
 
 #object for holding result data
 @dataclass

@@ -21,8 +21,8 @@ subroutine determinant_occ_to_bit(occupations, n_elec, n_spin_orbs, bitstring, n
 
         do i = 1, n_elec
             if (occupations(i) >= 1 .and. occupations(i) <= n_spin_orbs) then
-                word_index = (occupations(i) - 1) / 64 + 1
-                bit_index = mod(occupations(i) - 1, 64)
+                word_index = (occupations(i) - 1) / bits_per_word + 1
+                bit_index = mod(occupations(i) - 1, bits_per_word)
                 bitstring(word_index) = ibset(bitstring(word_index), bit_index)
             end if
         end do
@@ -44,8 +44,8 @@ subroutine determinant_bit_to_occ(bitstring, n_words, n_spin_orbs, occupations, 
         index = 1
 
         do i = 1, n_spin_orbs
-            word_index = (i - 1) / 64 + 1
-            bit_index = mod(i - 1, 64)
+            word_index = (i - 1) / bits_per_word + 1
+            bit_index = mod(i - 1, bits_per_word)
             if (btest(bitstring(word_index), bit_index) .and. index <= n_elec) then
                 occupations(index) = i
                 index = index + 1
@@ -86,8 +86,8 @@ logical function determinant_is_occupied(bitstring, n_words, orbital)
 
         determinant_is_occupied = .false.
         if (orbital <= 0) return
-        word_index = (orbital - 1) / 64 + 1
-        bit_index = mod(orbital - 1, 64)
+        word_index = (orbital - 1) / bits_per_word + 1
+        bit_index = mod(orbital - 1, bits_per_word)
         if (word_index <= n_words) then
             determinant_is_occupied = btest(bitstring(word_index), bit_index)
         end if
@@ -217,8 +217,10 @@ subroutine get_connected_dets(ref_det, n_words, n_spin_orbs, order, &
                     if ((removed_idx(1) <= n_orb) .eqv. (added_idx(1) <= n_orb)) then
                         candidate = ref_det
                     
-                        candidate((removed_idx(1)-1)/64 + 1) = ibclr(candidate((removed_idx(1)-1)/64 + 1), mod(removed_idx(1)-1,64))
-                        candidate((added_idx(1)-1)/64 + 1) = ibset(candidate((added_idx(1)-1)/64 + 1), mod(added_idx(1)-1,64))
+                        candidate((removed_idx(1)-1)/bits_per_word + 1) = &
+                            ibclr(candidate((removed_idx(1)-1)/bits_per_word + 1), mod(removed_idx(1)-1,bits_per_word))
+                        candidate((added_idx(1)-1)/bits_per_word + 1) = &
+                            ibset(candidate((added_idx(1)-1)/bits_per_word + 1), mod(added_idx(1)-1,bits_per_word))
 
                         duplicate = .false.
                         do j = 1, n_connected
@@ -250,14 +252,18 @@ subroutine get_connected_dets(ref_det, n_words, n_spin_orbs, order, &
                             if (merge(1, 0, removed_idx(1) <= n_orb) + merge(1, 0, removed_idx(2) <= n_orb) == &
                                 merge(1, 0, added_idx(1) <= n_orb) + merge(1, 0, added_idx(2) <= n_orb)) then
                                 candidate = ref_det
-                                candidate((removed_idx(1)-1)/64 + 1) = &
-                                    ibclr(candidate((removed_idx(1)-1)/64 + 1), mod(removed_idx(1)-1,64))
-                                candidate((added_idx(1)-1)/64 + 1) = &
-                                    ibset(candidate((added_idx(1)-1)/64 + 1), mod(added_idx(1)-1,64))
-                                candidate((removed_idx(2)-1)/64 + 1) = &
-                                    ibclr(candidate((removed_idx(2)-1)/64 + 1), mod(removed_idx(2)-1,64))
-                                candidate((added_idx(2)-1)/64 + 1) = &
-                                    ibset(candidate((added_idx(2)-1)/64 + 1), mod(added_idx(2)-1,64))
+                                candidate((removed_idx(1)-1)/bits_per_word + 1) = &
+                                    ibclr(candidate((removed_idx(1)-1)/bits_per_word + 1), &
+                                    mod(removed_idx(1)-1,bits_per_word))
+                                candidate((added_idx(1)-1)/bits_per_word + 1) = &
+                                    ibset(candidate((added_idx(1)-1)/bits_per_word + 1), &
+                                    mod(added_idx(1)-1,bits_per_word))
+                                candidate((removed_idx(2)-1)/bits_per_word + 1) = &
+                                    ibclr(candidate((removed_idx(2)-1)/bits_per_word + 1), &
+                                    mod(removed_idx(2)-1,bits_per_word))
+                                candidate((added_idx(2)-1)/bits_per_word + 1) = &
+                                    ibset(candidate((added_idx(2)-1)/bits_per_word + 1), &
+                                    mod(added_idx(2)-1,bits_per_word))
 
                                 duplicate = .false.
                                 do k = 1, n_connected

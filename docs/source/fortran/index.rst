@@ -12,4 +12,4 @@ The core SELQIE algorithms are implemented in Fortran.
    main
    methods
    selection
-
+   selection_utils

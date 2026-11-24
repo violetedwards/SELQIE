@@ -62,8 +62,8 @@ contains
         integer :: word_index, bit_index
 
         new_bitstring = bitstring
-        word_index = (orbital - 1) / 64 + 1
-        bit_index = mod(orbital - 1, 64)
+        word_index = (orbital - 1) / bits_per_word + 1
+        bit_index = mod(orbital - 1, bits_per_word)
         if (word_index <= n_words) then
             new_bitstring(word_index) = ibset(new_bitstring(word_index), bit_index)
         end if
@@ -76,8 +76,8 @@ contains
         integer :: word_index, bit_index
 
         new_bitstring = bitstring
-        word_index = (orbital - 1) / 64 + 1
-        bit_index = mod(orbital - 1, 64)
+        word_index = (orbital - 1) / bits_per_word + 1
+        bit_index = mod(orbital - 1, bits_per_word)
         if (word_index <= n_words) then
             new_bitstring(word_index) = ibclr(new_bitstring(word_index), bit_index)
         end if

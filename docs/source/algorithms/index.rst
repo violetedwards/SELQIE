@@ -5,3 +5,4 @@ Algorithms
    :maxdepth: 1
 
    hci
+   cipsi

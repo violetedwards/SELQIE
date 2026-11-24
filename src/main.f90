@@ -36,7 +36,7 @@ subroutine solve(method, sel_method, n_orb, n_up, n_down, h_int, g_int, nuc_rep,
 
         !get determinant words ready
         n_spin_orbs = size(h_int, 1)
-        n_words = ceiling(real(n_spin_orbs) / 64.0_dp)
+        n_words = (n_spin_orbs + bits_per_word - 1) / bits_per_word
 
 
         n_basis = 0

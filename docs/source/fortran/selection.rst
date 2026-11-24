@@ -140,3 +140,26 @@ Returns
 ``n_sel_space`` : integer
 
      Updated number of determinants in the selected space.
+
+
+cipsi
+-----
+
+``cipsi(selected_space, n_sel_space, n_words, old_c, old_e, n_spin_orbs, h, g, coefficient_threshold)``
+
+Performs iterative configuration interaction selection using the
+first-order wavefunction correction. For each unique external determinant
+:math:`a` connected by single or double excitations, the routine evaluates
+
+.. math::
+
+   c_a^{(1)} =
+   \frac{\sum_{i \in \mathrm{selected}} H_{ai} c_i}
+        {E_{\mathrm{var}} - H_{aa}}.
+
+The determinant is added when :math:`|c_a^{(1)}| > \mathrm{coefficient\_threshold}`. A near-zero
+denominator with nonzero coupling is treated as an intruder and selected.
+
+``coefficient_threshold`` : real(kind=dp)
+
+     CIPSI first-order coefficient threshold.

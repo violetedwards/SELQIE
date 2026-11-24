@@ -34,6 +34,7 @@ fortran_sources = files(
   'src/determinants.f90',
   'src/hamiltonian.f90',
   'src/diagonalisers.f90',
+  'src/selection_utils.f90',
   'src/selection.f90',
   'src/methods.f90',
   'src/main.f90'
