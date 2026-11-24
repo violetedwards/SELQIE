@@ -6,13 +6,13 @@ module selection
 
 contains
 
-    subroutine add_selected_dets(sel_method, selected_space, n_sel_space, n_words, old_e, old_c, n_spin_orbs, h, g, epsilon, sigma, tdets)
+    subroutine add_selected_dets(sel_method, selected_space, n_sel_space, n_words, old_e, old_c, n_spin_orbs, h, g, epsilon, sigma, cdets, tdets)
 
         !routes to correct selection algorithm
         character(len=*), intent(in) :: sel_method
         integer(kind = 8), allocatable, intent(inout) :: selected_space(:,:)
         integer, intent(inout) :: n_sel_space
-        integer, intent(in) :: n_words, n_spin_orbs, tdets
+        integer, intent(in) :: n_words, n_spin_orbs, cdets, tdets
         real(kind = dp), intent(in) :: old_e, old_c(:), h(:,:), g(:,:,:,:), epsilon, sigma
 
         if (sel_method == "hci") then
@@ -20,7 +20,7 @@ contains
         else if (sel_method == "aci") then
             call aci(selected_space, n_sel_space, n_words, old_c, old_e, n_spin_orbs, h, g, sigma)
         else if (sel_method == "asci") then
-            call asci(selected_space, n_sel_space, n_words, old_c, old_e, n_spin_orbs, h, g, tdets)
+            call asci(selected_space, n_sel_space, n_words, old_c, old_e, n_spin_orbs, h, g, cdets, tdets)
         end if
 
     end subroutine add_selected_dets
@@ -191,13 +191,13 @@ contains
 
         end subroutine
 
-    subroutine asci(selected_space, n_sel_space, n_words, old_c, old_e, n_spin_orbs, h, g, tdets)
+    subroutine asci(selected_space, n_sel_space, n_words, old_c, old_e, n_spin_orbs, h, g, cdets, tdets)
         !Adaptive Sampling Configuration Interaction
 
         integer(kind=8), allocatable, intent(inout) :: selected_space(:,:)
         integer, intent(inout) :: n_sel_space
 
-        integer, intent(in) :: n_words,n_spin_orbs,tdets
+        integer, intent(in) :: n_words,n_spin_orbs,cdets,tdets
 
         real(dp), intent(in) :: old_e
         real(dp), intent(in) :: old_c(:)
@@ -208,22 +208,50 @@ contains
         integer(kind=8), allocatable :: interacting_space(:,:)
         integer(kind=8), allocatable :: final_space(:,:)
         integer(kind=8), allocatable :: candidate_space(:,:)
+        integer(kind=8), allocatable :: core_space(:,:)
 
         integer :: i,j,order,max_index
-        integer :: n_connected, n_interacting, n_candidates, target_dets
+        integer :: n_connected, n_interacting, n_candidates, n_core, target_dets
+        integer, allocatable :: core_indices(:)
 
         integer(kind=8) :: temp_det(n_words)
         real(dp) :: sum_h_c, temp_coeff, denominator
-        real(dp), allocatable :: pert_amp(:), candidate_coeffs(:)
+        real(dp), allocatable :: pert_amp(:), candidate_coeffs(:), core_coeffs(:)
 
-        !generate interacting space with only unique elements
-        allocate(interacting_space(n_words,max(8,n_sel_space)))
-        n_interacting = 0
-        call append_unique_dets(interacting_space, n_interacting, selected_space(:,1:n_sel_space), n_sel_space, n_words)
+        !select the cdet determinants with largest coefficients to form the core
+        n_core = n_sel_space
+        if (cdets > 0) n_core = min(cdets, n_sel_space)
 
+        allocate(core_indices(n_sel_space))
+        allocate(core_space(n_words,n_core))
+        allocate(core_coeffs(n_core))
         do i = 1, n_sel_space
+            core_indices(i) = i
+        end do
+
+        do i = 1, n_sel_space - 1
+            max_index = i
+            do j = i + 1, n_sel_space
+                if (abs(old_c(core_indices(j))) > abs(old_c(core_indices(max_index)))) max_index = j
+            end do
+            if (max_index /= i) then
+                j = core_indices(i)
+                core_indices(i) = core_indices(max_index)
+                core_indices(max_index) = j
+            end if
+        end do
+
+        do i = 1, n_core
+            core_space(:,i) = selected_space(:,core_indices(i))
+            core_coeffs(i) = old_c(core_indices(i))
+        end do
+
+        !search only single and double excitations of the core space
+        allocate(interacting_space(n_words,max(8,n_core)))
+        n_interacting = 0
+        do i = 1, n_core
             do order=1,2
-                call get_connected_dets(selected_space(:,i), n_words, n_spin_orbs, order, connected, n_connected)
+                call get_connected_dets(core_space(:,i), n_words, n_spin_orbs, order, connected, n_connected)
                 if (n_connected > 0) then
                     call append_unique_dets(interacting_space, n_interacting, connected(:,1:n_connected), n_connected, n_words)
                 end if
@@ -231,17 +259,25 @@ contains
             end do
         end do
 
-        n_interacting = n_interacting - n_sel_space
-        do i = 1, n_interacting
-            interacting_space(:,i) = interacting_space(:,i+n_sel_space)
+        !core determinants already have their current CI coefficients in the target candidates
+        i = 1
+        do while (i <= n_interacting)
+            if (any_selected_det(interacting_space(:,i), core_space(:,1:n_core), n_core, n_words)) then
+                do j = i, n_interacting - 1
+                    interacting_space(:,j) = interacting_space(:,j+1)
+                end do
+                n_interacting = n_interacting - 1
+            else
+                i = i + 1
+            end if
         end do
 
-        !get perturbed amplitudes
+        !get perturbed amplitudes, using only core determinants in the sum
         allocate(pert_amp(n_interacting))
         do i = 1, n_interacting
             sum_h_c = 0.0_dp
-            do j = 1, n_sel_space
-                sum_h_c = sum_h_c + get_matrix_element(interacting_space(:,i),n_words, selected_space(:,j), n_words, n_spin_orbs, h, g) * old_c(j)
+            do j = 1, n_core
+                sum_h_c = sum_h_c + get_matrix_element(interacting_space(:,i),n_words, core_space(:,j), n_words, n_spin_orbs, h, g) * core_coeffs(j)
             end do
             denominator = get_matrix_element(interacting_space(:,i),n_words,interacting_space(:,i),n_words,n_spin_orbs,h,g)-old_e
             if (abs(denominator) > 1.0e-10_dp) then
@@ -251,16 +287,16 @@ contains
             end if
         end do
 
-        !combine old selected space and interacting space, and combine old c and perturbed amplitudes
-        n_candidates = n_sel_space + n_interacting
+        !combine core coefficients and perturbed search amplitudes
+        n_candidates = n_core + n_interacting
         allocate(candidate_space(n_words, n_candidates))
         allocate(candidate_coeffs(n_candidates))
 
-        candidate_space(:,1:n_sel_space) = selected_space(:,1:n_sel_space)
-        candidate_coeffs(1:n_sel_space) = old_c(1:n_sel_space)
+        candidate_space(:,1:n_core) = core_space(:,1:n_core)
+        candidate_coeffs(1:n_core) = core_coeffs(1:n_core)
         if (n_interacting > 0) then
-            candidate_space(:,n_sel_space+1:n_candidates) = interacting_space(:,1:n_interacting)
-            candidate_coeffs(n_sel_space+1:n_candidates) = pert_amp(1:n_interacting)
+            candidate_space(:,n_core+1:n_candidates) = interacting_space(:,1:n_interacting)
+            candidate_coeffs(n_core+1:n_candidates) = pert_amp(1:n_interacting)
         end if
 
         !sort amplitude list, and then sort det list by amp sorting
@@ -295,6 +331,20 @@ contains
         n_sel_space = target_dets
 
         end subroutine
+
+        logical function any_selected_det(det, dets, n_dets, n_words)
+            integer(kind=8), intent(in) :: det(n_words), dets(n_words,n_dets)
+            integer, intent(in) :: n_dets, n_words
+            integer :: i
+
+            any_selected_det = .false.
+            do i = 1, n_dets
+                if (all(det == dets(:,i))) then
+                    any_selected_det = .true.
+                    return
+                end if
+            end do
+        end function any_selected_det
 
 
 end module selection

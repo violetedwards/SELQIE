@@ -12,7 +12,7 @@ module selqie_api
 
 contains
 
-subroutine solve(method, sel_method, n_orb, n_up, n_down, h_int, g_int, nuc_rep, conv, epsilon, cmin, energy, n_basis, sigma, tdets)
+subroutine solve(method, sel_method, n_orb, n_up, n_down, h_int, g_int, nuc_rep, conv, epsilon, cmin, energy, n_basis, sigma, cdets, tdets)
 !
 !       MAIN SOLVING ROUTINE
 !
@@ -21,7 +21,7 @@ subroutine solve(method, sel_method, n_orb, n_up, n_down, h_int, g_int, nuc_rep,
         implicit none
 
         integer :: n_orb, n_up, n_down
-        integer :: n_words, n_spin_orbs, n_basis, tdets
+        integer :: n_words, n_spin_orbs, n_basis, cdets, tdets
         character(len=*) :: method, sel_method
         real(kind = dp) :: h_int(:,:)
         real(kind = dp) :: g_int(:,:,:,:)
@@ -30,7 +30,7 @@ subroutine solve(method, sel_method, n_orb, n_up, n_down, h_int, g_int, nuc_rep,
         real(kind = dp), allocatable:: c_out(:)
         integer(kind = 8), allocatable :: basis(:,:)
 
-!f2py   intent(in) n_orb, n_up, n_down, h_int, g_int, nuc_rep, method, sel_method, conv, epsilon, cmin, sigma, tdets
+!f2py   intent(in) n_orb, n_up, n_down, h_int, g_int, nuc_rep, method, sel_method, conv, epsilon, cmin, sigma, cdets, tdets
 !f2py   intent(out) energy, n_basis
 
 
@@ -47,7 +47,7 @@ subroutine solve(method, sel_method, n_orb, n_up, n_down, h_int, g_int, nuc_rep,
             call fci(n_orb, n_up, n_down, n_words, n_spin_orbs, h_int, g_int, e_low, n_basis, success)
         else if (method == "sci") then
             call sci(n_orb, n_up, n_down, n_words, n_spin_orbs, &
-                n_basis, h_int, g_int, sel_method, conv, epsilon, cmin, e_low, success, basis, c_out, sigma, tdets)
+                n_basis, h_int, g_int, sel_method, conv, epsilon, cmin, e_low, success, basis, c_out, sigma, cdets, tdets)
 
             if (allocated(stored_basis)) deallocate(stored_basis)
             if (allocated(stored_coeffs)) deallocate(stored_coeffs)

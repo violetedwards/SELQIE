@@ -20,6 +20,7 @@ class settings:
     cmin: float = 1e-3
     hci_epsilon: float = None
     aci_sigma: float = None
+    asci_cdets: int = None
     asci_tdets: int = None
 
 #object for holding result data

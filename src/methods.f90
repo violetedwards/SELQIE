@@ -8,8 +8,8 @@ module methods
 
 contains
 
-    subroutine sci(n_orb, n_up, n_down, n_words, n_spin_orbs, n_basis, h, g, sel_method, conv, epsilon, cmin, energy, success, basis, c_out, sigma, tdets)
-        integer, intent(in) :: n_orb, n_up, n_down, n_words, n_spin_orbs, tdets
+    subroutine sci(n_orb, n_up, n_down, n_words, n_spin_orbs, n_basis, h, g, sel_method, conv, epsilon, cmin, energy, success, basis, c_out, sigma, cdets, tdets)
+        integer, intent(in) :: n_orb, n_up, n_down, n_words, n_spin_orbs, cdets, tdets
         real(kind = dp), intent(in) :: h(:,:), conv, epsilon, cmin, sigma
         real(kind = dp), intent(in) :: g(:,:,:,:)
         real(kind = dp), intent(out) :: energy
@@ -63,7 +63,7 @@ contains
 
             !apply selection algorithm to add to selected space
 
-            call add_selected_dets(sel_method, selected_space, n_sel_space, n_words, old_e, old_c, n_spin_orbs, h, g, epsilon, sigma, tdets)
+            call add_selected_dets(sel_method, selected_space, n_sel_space, n_words, old_e, old_c, n_spin_orbs, h, g, epsilon, sigma, cdets, tdets)
             allocate(sel_c(n_sel_space))
 
             call davidson_lowest(selected_space, n_sel_space, n_words, n_spin_orbs, h, g, sel_e, sel_c)
@@ -82,7 +82,7 @@ contains
             end if
 
             !prune if not converged
-            if (converged .eqv. .false.) then
+            if (converged .eqv. .false. .and. sel_method /= "asci") then
                 call prune(selected_space, n_sel_space, n_words, new_c, cmin)
             end if
 

@@ -22,7 +22,7 @@ mol.build()
 n_alpha, n_beta = mol.nelec
 hci_settings = slq.config.settings(method="sci",sel_method="hci",n_up=n_alpha,n_down=n_beta,conv=1e-6,cmin=1e-6, hci_epsilon=0.001)
 aci_settings = slq.config.settings(method="sci",sel_method="aci",n_up=n_alpha,n_down=n_beta,conv=1e-6,cmin=1e-6, aci_sigma=0.000001)
-asci_settings = slq.config.settings(method="sci",sel_method="asci",n_up=n_alpha,n_down=n_beta,conv=1e-6,cmin=1e-6, asci_tdets=100)
+asci_settings = slq.config.settings(method="sci",sel_method="asci",n_up=n_alpha,n_down=n_beta,conv=1e-6,cmin=1e-6, asci_cdets=50, asci_tdets=100)
 
 
 def timed(fn):
@@ -68,6 +68,7 @@ print(f"SELQIE ASCI {detstr:<9} {asci_state.n_basis}\n")
 print(f"SELQIE conv {energystr:<9} {hci_settings.conv:.1g} Ha")
 print(f"SELQIE HCI epsilon {colon:<2} {hci_settings.hci_epsilon} Ha")
 print(f"SELQIE ACI sigma {colon:<4} {aci_settings.aci_sigma} Ha")
+print(f"SELQIE ASCI cdets {colon:<3} {asci_settings.asci_cdets} dets")
 print(f"SELQIE ASCI tdets {colon:<3} {asci_settings.asci_tdets} dets\n")
 
 print(f"PySCF FCI {energystr:<10} {fci_e:.12f} Ha")
