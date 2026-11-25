@@ -46,11 +46,12 @@ contains
         !main loop
         do while (converged .eqv. .false.)
 
-            write(*, '(A,I0)') "Iteration ", iteration
-            write(*, '(A,I0)') "Current Sel Space ", n_sel_space
+            write(*, '(A,I0,A)') "=====Iteration ", iteration, "====="
+
 
             allocate(sel_c(n_sel_space))
 
+            write(*, '(A,I0,A)') "Diagonalising current selected space (", n_sel_space, " determinants)"
             call davidson_lowest(selected_space, n_sel_space, n_words, n_spin_orbs, h, g, sel_e, sel_c)
 
             success = .true.
@@ -63,9 +64,11 @@ contains
 
             !apply selection algorithm to add to selected space
 
+            write(*, '(A,A)') "Selecting determinants with ", trim(sel_method)
             call add_selected_dets(sel_method, selected_space, n_sel_space, n_words, old_e, old_c, n_spin_orbs, h, g, epsilon, sigma, cdets, tdets)
             allocate(sel_c(n_sel_space))
 
+            write(*, '(A,I0,A)') "Diagonalising expanded selected space (", n_sel_space, " determinants)"
             call davidson_lowest(selected_space, n_sel_space, n_words, n_spin_orbs, h, g, sel_e, sel_c)
             success = .true.
 
@@ -153,6 +156,7 @@ contains
 
         allocate(eigvec(n_basis))
 
+        write(*, '(A,I0,A)') "Diagonalising CISD space (", n_basis, " determinants)"
         call davidson_lowest(det_basis, n_basis, n_words, n_spin_orbs, h_int, g_int, e_low, eigvec)
 
         success = .true.
@@ -197,6 +201,7 @@ contains
 
         allocate(eigvec(n_basis))
 
+        write(*, '(A,I0,A)') "Diagonalising FCI space (", n_basis, " determinants)"
         call davidson_lowest( det_basis, n_basis, n_words, n_spin_orbs, h_int, g_int, e_low, eigvec)
         success = .true.
     end subroutine fci
