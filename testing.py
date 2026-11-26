@@ -18,7 +18,7 @@ mol.symmetry = "d2h"
 mol.build()
 
 n_alpha, n_beta = mol.nelec
-hci_settings = slq.config.settings(method="sci",sel_method="hci",n_up=n_alpha,n_down=n_beta,conv=1e-6,cmin=1e-6, hci_epsilon=0.003)
+hci_settings = slq.config.settings(method="sci",sel_method="hci",n_up=n_alpha,n_down=n_beta,conv=1e-6,cmin=1e-6, hci_epsilon=0.003, print_level=2)
 aci_settings = slq.config.settings(method="sci",sel_method="aci",n_up=n_alpha,n_down=n_beta,conv=1e-6,cmin=1e-6, aci_sigma=0.0002)
 haci_settings = slq.config.settings(method="sci",sel_method="haci",n_up=n_alpha,n_down=n_beta,conv=1e-6,cmin=1e-6, aci_sigma=0.0002)
 asci_settings = slq.config.settings(method="sci",sel_method="asci",n_up=n_alpha,n_down=n_beta,conv=1e-6,cmin=1e-6, asci_cdets=100, asci_tdets=575)

@@ -23,6 +23,11 @@ class settings:
     asci_cdets: int = None
     asci_tdets: int = None
     cipsi_coeff_threshold: float = None
+    print_level: int = 1
+
+    def __post_init__(self):
+        if self.print_level not in (0, 1, 2):
+            raise ValueError("print_level must be 0, 1, or 2")
 
 #object for holding result data
 @dataclass

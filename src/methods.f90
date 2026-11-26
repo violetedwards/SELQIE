@@ -9,8 +9,8 @@ module methods
 contains
 
     subroutine sci(n_orb, n_up, n_down, n_words, n_spin_orbs, n_basis, h, g, sel_method, conv, epsilon, cmin, energy, success, &
-            basis, c_out, sigma, cdets, tdets)
-        integer, intent(in) :: n_orb, n_up, n_down, n_words, n_spin_orbs, cdets, tdets
+            basis, c_out, sigma, cdets, tdets, print_level)
+        integer, intent(in) :: n_orb, n_up, n_down, n_words, n_spin_orbs, cdets, tdets, print_level
         real(kind = dp), intent(in) :: h(:,:), conv, epsilon, cmin, sigma
         real(kind = dp), intent(in) :: g(:,:,:,:)
         real(kind = dp), intent(out) :: energy
@@ -28,6 +28,8 @@ contains
         logical :: converged
         integer :: iteration, n_sel_space
         real(kind = dp) :: sel_e, old_e, new_e
+        integer(kind = 8) :: clock_start, clock_end, clock_rate
+        real(kind = dp) :: selection_time, diagonalisation_time
 
         !get HF reference determinant
         n_basis = 0
@@ -43,17 +45,25 @@ contains
         !main loop initial vars
         converged = .false.
         iteration = 0
+        selection_time = 0.0_dp
+        diagonalisation_time = 0.0_dp
+        call system_clock(count_rate=clock_rate)
 
         !main loop
         do while (converged .eqv. .false.)
 
-            write(*, '(A,I0,A)') "=====Iteration ", iteration, "====="
+            if (print_level >= 1) write(*, '(A,I0,A)') "=====Iteration ", iteration, "====="
 
 
             allocate(sel_c(n_sel_space))
 
-            write(*, '(A,I0,A)') "Diagonalising current selected space (", n_sel_space, " determinants)"
+            if (print_level >= 1) then
+                write(*, '(A,I0,A)') "Diagonalising current selected space (", n_sel_space, " determinants)"
+            end if
+            call system_clock(clock_start)
             call davidson_lowest(selected_space, n_sel_space, n_words, n_spin_orbs, h, g, sel_e, sel_c)
+            call system_clock(clock_end)
+            diagonalisation_time = diagonalisation_time + real(clock_end - clock_start, dp) / real(clock_rate, dp)
 
             success = .true.
 
@@ -65,13 +75,21 @@ contains
 
             !apply selection algorithm to add to selected space
 
-            write(*, '(A,A)') "Selecting determinants with ", trim(sel_method)
+            if (print_level >= 1) write(*, '(A,A)') "Selecting determinants with ", trim(sel_method)
+            call system_clock(clock_start)
             call add_selected_dets(sel_method, selected_space, n_sel_space, n_words, old_e, old_c, n_spin_orbs, h, g, epsilon, &
                  sigma, cdets, tdets)
+            call system_clock(clock_end)
+            selection_time = selection_time + real(clock_end - clock_start, dp) / real(clock_rate, dp)
             allocate(sel_c(n_sel_space))
 
-            write(*, '(A,I0,A)') "Diagonalising expanded selected space (", n_sel_space, " determinants)"
+            if (print_level >= 1) then
+                write(*, '(A,I0,A)') "Diagonalising expanded selected space (", n_sel_space, " determinants)"
+            end if
+            call system_clock(clock_start)
             call davidson_lowest(selected_space, n_sel_space, n_words, n_spin_orbs, h, g, sel_e, sel_c)
+            call system_clock(clock_end)
+            diagonalisation_time = diagonalisation_time + real(clock_end - clock_start, dp) / real(clock_rate, dp)
             success = .true.
 
             !rename variables
@@ -88,7 +106,10 @@ contains
 
             !prune if not converged
             if (converged .eqv. .false. .and. sel_method /= "asci") then
+                call system_clock(clock_start)
                 call prune(selected_space, n_sel_space, n_words, new_c, cmin)
+                call system_clock(clock_end)
+                selection_time = selection_time + real(clock_end - clock_start, dp) / real(clock_rate, dp)
             end if
 
             !getting ready for next loop
@@ -97,8 +118,16 @@ contains
         end do
 
         !outputs
-        write(*, '(A,I0)') "Energy converged"
-        write(*, '(A,I0)') "----------------------------------------------------------"
+        if (print_level >= 1) then
+            write(*, '(A)') "Energy converged"
+        end if
+        if (print_level >= 2) then
+            write(*, '(A,F10.3,A)') "Total selection time: ", selection_time, " secs"
+            write(*, '(A,F10.3,A)') "Total diagonalisation time: ", diagonalisation_time, " secs"
+        end if
+        if (print_level >= 1) then
+            write(*, '(A)') "----------------------------------------------------------"
+        end if
         energy = new_e
         n_basis = n_sel_space
         basis = selected_space(:,1:n_sel_space)
@@ -127,8 +156,8 @@ contains
 
     end subroutine prune
 
-    subroutine cisd(n_orb, n_up, n_down, n_words, n_spin_orbs, h_int, g_int, e_low, n_basis, success)
-        integer, intent(in) :: n_orb, n_up, n_down, n_words, n_spin_orbs
+    subroutine cisd(n_orb, n_up, n_down, n_words, n_spin_orbs, h_int, g_int, e_low, n_basis, success, print_level)
+        integer, intent(in) :: n_orb, n_up, n_down, n_words, n_spin_orbs, print_level
         real(kind = dp), intent(in) :: h_int(:,:)
         real(kind = dp), intent(in) :: g_int(:,:,:,:)
         real(kind = dp), intent(out) :: e_low
@@ -140,6 +169,7 @@ contains
         integer :: n_singles, n_doubles
         real(kind = dp), allocatable :: eigvec(:)   
         integer(kind = 8), allocatable :: ref_det(:), det_basis(:,:), singles(:,:), doubles(:,:)
+        integer(kind = 8) :: clock_start, clock_end, clock_rate
 
         !get HF reference determinant
         allocate(ref_det(n_words))
@@ -158,14 +188,21 @@ contains
 
         allocate(eigvec(n_basis))
 
-        write(*, '(A,I0,A)') "Diagonalising CISD space (", n_basis, " determinants)"
+        if (print_level >= 1) write(*, '(A,I0,A)') "Diagonalising CISD space (", n_basis, " determinants)"
+        call system_clock(count_rate=clock_rate)
+        call system_clock(clock_start)
         call davidson_lowest(det_basis, n_basis, n_words, n_spin_orbs, h_int, g_int, e_low, eigvec)
+        call system_clock(clock_end)
+        if (print_level >= 2) then
+            write(*, '(A,F10.3,A)') "Total diagonalisation time: ", &
+                real(clock_end - clock_start, dp) / real(clock_rate, dp), " secs"
+        end if
 
         success = .true.
     end subroutine cisd
 
-    subroutine fci(n_orb, n_up, n_down, n_words, n_spin_orbs, h_int, g_int, e_low, n_basis, success)
-        integer, intent(in) :: n_orb, n_up, n_down, n_words, n_spin_orbs
+    subroutine fci(n_orb, n_up, n_down, n_words, n_spin_orbs, h_int, g_int, e_low, n_basis, success, print_level)
+        integer, intent(in) :: n_orb, n_up, n_down, n_words, n_spin_orbs, print_level
         real(kind = dp), intent(in) :: h_int(:,:)
         real(kind = dp), intent(in) :: g_int(:,:,:,:)
         real(kind = dp), intent(out) :: e_low
@@ -176,6 +213,7 @@ contains
         integer, allocatable :: alpha(:,:), beta(:,:)
         real(kind = dp), allocatable :: eigvec(:)
         integer(kind = 8), allocatable :: det_basis(:,:)
+        integer(kind = 8) :: clock_start, clock_end, clock_rate
 
         !every alpha string paired with every beta string gives each determinant once
         call combinations(n_orb, n_up, alpha, n_alpha_strings)
@@ -203,8 +241,15 @@ contains
 
         allocate(eigvec(n_basis))
 
-        write(*, '(A,I0,A)') "Diagonalising FCI space (", n_basis, " determinants)"
+        if (print_level >= 1) write(*, '(A,I0,A)') "Diagonalising FCI space (", n_basis, " determinants)"
+        call system_clock(count_rate=clock_rate)
+        call system_clock(clock_start)
         call davidson_lowest( det_basis, n_basis, n_words, n_spin_orbs, h_int, g_int, e_low, eigvec)
+        call system_clock(clock_end)
+        if (print_level >= 2) then
+            write(*, '(A,F10.3,A)') "Total diagonalisation time: ", &
+                real(clock_end - clock_start, dp) / real(clock_rate, dp), " secs"
+        end if
         success = .true.
     end subroutine fci
 

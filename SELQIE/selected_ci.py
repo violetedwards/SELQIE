@@ -13,10 +13,11 @@ def solve(
     """
     Solve using Selected CI.
     """
-    if settings.method == "sci":
-        print(f"Solving {settings.method} {settings.sel_method}")
-    else:
-        print(f"Solving {settings.method}")
+    if settings.print_level >= 1:
+        if settings.method == "sci":
+            print(f"Solving {settings.method} {settings.sel_method}")
+        else:
+            print(f"Solving {settings.method}")
 
     #Run initial HF calculation
     mf = mol.RHF().run()
@@ -39,7 +40,7 @@ def solve(
 
     #move to fortran for solving 
     selection_threshold = settings.cipsi_coeff_threshold if settings.sel_method == "cipsi" else settings.hci_epsilon
-    energy, n_basis = slq.solve(settings.method, settings.sel_method, n_orb, settings.n_up, settings.n_down, h_int, g_int, nuc_replusion, settings.conv, selection_threshold or 0.0, settings.cmin, settings.aci_sigma or 0.0, settings.asci_cdets or 0, settings.asci_tdets or 0)
+    energy, n_basis = slq.solve(settings.method, settings.sel_method, n_orb, settings.n_up, settings.n_down, h_int, g_int, nuc_replusion, settings.conv, selection_threshold or 0.0, settings.cmin, settings.aci_sigma or 0.0, settings.asci_cdets or 0, settings.asci_tdets or 0, settings.print_level)
     basis = slq._selqie.selqie_api.stored_basis
     coeffs = slq._selqie.selqie_api.stored_coeffs
     state_out = slq.config.state(energy=energy, n_basis=n_basis, basis=basis, civec=coeffs)

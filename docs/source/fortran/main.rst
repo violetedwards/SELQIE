@@ -12,7 +12,7 @@ solve
 
 **Source:** `main.f90:L14-L71 <https://github.com/violetedwards/SELQIE/blob/selqie-main/src/main.f90#L14-L71>`_
 
-``solve(method, sel_method, n_orb, n_up, n_down, h_int, g_int, nuc_rep, conv, epsilon, cmin, energy, n_basis)``
+``solve(method, sel_method, n_orb, n_up, n_down, h_int, g_int, nuc_rep, conv, epsilon, cmin, energy, n_basis, sigma, cdets, tdets, print_level)``
 
 Main solving routine for all electronic structure methods implemented in
 SELQIE.
@@ -77,6 +77,11 @@ Parameters
 ``cmin`` : real(kind=dp)
 
      Minimum coefficient threshold used during determinant selection.
+
+``print_level`` : integer
+
+     Output verbosity: ``0`` suppresses Fortran output, ``1`` prints solver
+     progress, and ``2`` also prints timing information.
 
 Returns
 ^^^^^^^
