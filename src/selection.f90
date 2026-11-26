@@ -24,6 +24,8 @@ contains
             call asci(selected_space, n_sel_space, n_words, old_c, old_e, n_spin_orbs, h, g, cdets, tdets)
         else if (sel_method == "cipsi") then
             call cipsi(selected_space, n_sel_space, n_words, old_c, old_e, n_spin_orbs, h, g, epsilon)
+        else if (sel_method == "haci") then
+            call haci(selected_space, n_sel_space, n_words, old_c, old_e, n_spin_orbs, h, g, sigma)
         end if
 
     end subroutine add_selected_dets
@@ -347,5 +349,85 @@ contains
         n_sel_space = target_dets
 
         end subroutine
+
+    subroutine haci(selected_space, n_sel_space, n_words, old_c, old_e, n_spin_orbs, h, g, sigma)
+        !Heat Bath Adaptive Configuration Interaction
+
+        integer(kind=8), allocatable, intent(inout) :: selected_space(:,:)
+        integer, intent(inout) :: n_sel_space
+
+        integer, intent(in) :: n_words
+        integer, intent(in) :: n_spin_orbs
+
+        real(dp), intent(in) :: old_e
+        real(dp), intent(in) :: old_c(:)
+        real(dp), intent(in) :: h(:,:)
+        real(dp), intent(in) :: g(:,:,:,:)
+        real(dp), intent(in) :: sigma
+
+        integer(kind=8), allocatable :: connected(:,:)
+        integer(kind=8), allocatable :: interacting_space(:,:)
+        integer(kind=8), allocatable :: final_space(:,:)
+        integer(kind=8), allocatable :: additional_space(:,:)
+
+        integer :: i, j, order
+        integer :: n_connected, n_interacting, n_final, n_additional
+
+        real(dp) :: epsilon, hij, ep, v, delta, sum_energy_importance
+        real(dp), allocatable :: energy_importance(:)
+
+        epsilon = sigma
+
+        !generate unique external determinants that pass the HCI heat bath threshold.
+        allocate(interacting_space(n_words, max(8, n_sel_space)))
+        n_interacting = 0
+        do i = 1, n_sel_space
+            do order = 1,2
+                call get_connected_dets(selected_space(:,i), n_words, n_spin_orbs, order, connected, n_connected)
+                do j = 1, n_connected
+                    hij = get_matrix_element(connected(:,j), n_words, selected_space(:,i), n_words, n_spin_orbs, h, g)
+                    if(abs(hij*old_c(i)) > epsilon) then
+                        call append_unique_dets(interacting_space, n_interacting, connected(:,j:j), 1, n_words)
+                    end if
+                end do
+                if(allocated(connected)) deallocate(connected)
+            end do
+        end do
+
+        call remove_selected_dets(interacting_space, n_interacting, selected_space(:,1:n_sel_space), n_sel_space, n_words)
+
+        !rank candidates by the ACI energy lowering from mixing with the current state.
+        allocate(energy_importance(n_interacting))
+        do i = 1, n_interacting
+            ep = get_matrix_element(interacting_space(:,i), n_words, interacting_space(:,i), n_words, n_spin_orbs, h, g)
+            v = 0.0_dp
+            do j = 1, n_sel_space
+                hij = get_matrix_element(interacting_space(:,i), n_words, selected_space(:,j), n_words, n_spin_orbs, h, g)
+                v = v + hij * old_c(j)
+            end do
+            delta = ep - old_e
+            energy_importance(i) = abs(delta/2 - sqrt((delta*delta/4)+(v*v)))
+        end do
+
+        call sort_dets_by_score(interacting_space(:,1:n_interacting), energy_importance, n_interacting, n_words, .false.)
+
+        !add the highest-importance candidates until the omitted importance is <= sigma.
+        allocate(additional_space(n_words, max(8, n_sel_space)))
+        n_additional = 0
+        sum_energy_importance = sum(energy_importance)
+        do i = 1, n_interacting
+            if (sum_energy_importance <= sigma) exit
+            call append_unique_dets(additional_space, n_additional, interacting_space(:,i:i), 1, n_words)
+            sum_energy_importance = max(0.0_dp, sum_energy_importance - energy_importance(i))
+        end do
+
+        allocate(final_space(n_words, n_sel_space + n_additional))
+        n_final = 0
+        call append_unique_dets(final_space, n_final, selected_space(:,1:n_sel_space), n_sel_space, n_words)
+        call append_unique_dets(final_space, n_final, additional_space(:,1:n_additional), n_additional, n_words)
+        call move_alloc(final_space, selected_space)
+        n_sel_space = n_final
+
+    end subroutine haci
 
 end module selection
